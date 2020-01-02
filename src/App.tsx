@@ -106,9 +106,10 @@ const DockUnstyled = (props: {
     onSplitVertical: () => void
     onSplitHorizontal: () => void
     onClose: () => void
+    className?: string
 }) => {
     return (
-        <div>
+        <div className={props.className}>
             <DockHeader>
                 <HeaderTitle>
                     Header
@@ -126,10 +127,8 @@ const DockUnstyled = (props: {
 
 const Dock = styled(DockUnstyled)`
   background: #FAFAFA;
-  width: calc(100% - 2rem);
-  height: calc(100% - 2rem);
-  margin: 1rem;
- 
+  width: 100%;
+  height: 100%;
 `;
 
 const LayoutNode = (props: { node: ILayoutNode }) => {

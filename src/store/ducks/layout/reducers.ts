@@ -25,6 +25,7 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                     console.log("current tab not found");
                     return state;
                 }
+                console.log(currentTab);
                 const currentNode = findNode(action.payload.nodeId, currentTab);
                 if(currentNode === undefined) {
                     console.log("current node not found");
