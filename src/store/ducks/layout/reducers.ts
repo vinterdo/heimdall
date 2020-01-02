@@ -62,8 +62,36 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                 currentNode.percent = 50;
                 return newState;
             })();
-        case CLOSE_NODE_ACTION:
-            return state;
+        case CLOSE_NODE_ACTION:return (() => {
+            const newState = JSON.parse(JSON.stringify(state));
+            const currentTab = newState.tabs["default"];
+            if(currentTab === undefined) {
+                console.log("current tab not found");
+                return state;
+            }
+            const id = action.payload.nodeId;
+            const parentId = id.substr(0, id.length - 1);
+            const ownSide = id.substr(id.length - 1, id.length);
+            const currentNodeParent = findNode(parentId, currentTab);
+            if(currentNodeParent === undefined) {
+                console.log("current node parent not found");
+                return state;
+            }
+            const siblingNode = ownSide === 'a' ? currentNodeParent.b : currentNodeParent.a;
+
+            if(siblingNode === undefined) {
+                console.log("current node sibling not found");
+                return state;
+            }
+
+            currentNodeParent.a = undefined;
+            currentNodeParent.b = undefined;
+            currentNodeParent.split = undefined;
+            currentNodeParent.percent = undefined;
+            currentNodeParent.docked = siblingNode.docked;
+
+            return newState;
+        })();
         default:
             return state;
 
