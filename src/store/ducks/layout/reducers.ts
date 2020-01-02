@@ -1,6 +1,5 @@
 import {
     CLOSE_NODE_ACTION,
-    ILayoutNode,
     ILayoutState,
     LayoutActionTypes,
     SPLIT_NODE_HORIZONTALLY_ACTION,
@@ -35,7 +34,7 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                 currentNode.a = Object.assign({}, currentNode);
                 currentNode.a.id += "a";
                 currentNode.docked = undefined;
-                currentNode.b = {docked: "new", id: currentNode.id + "b"};
+                currentNode.b = {docked: undefined, id: currentNode.id + "b"};
                 currentNode.split = "horizontal";
                 currentNode.percent = 50;
                 return newState;
@@ -57,7 +56,7 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                 currentNode.a = Object.assign({}, currentNode);
                 currentNode.a.id += "a";
                 currentNode.docked = undefined;
-                currentNode.b = {docked: "new", id: currentNode.id + "b"};
+                currentNode.b = {docked: undefined, id: currentNode.id + "b"};
                 currentNode.split = "vertical";
                 currentNode.percent = 50;
                 return newState;
