@@ -1,6 +1,10 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
+import {useDrop} from "react-dnd";
+import {useDispatch} from "react-redux";
+import * as ReactDOM from "react-dom";
+import {moveWindowBetweenNodes} from "../../store/ducks/layout/actions";
 
 const DockHeader = styled.div`
   color: #888;
@@ -41,9 +45,23 @@ const DockUnstyled = (props: {
     onSplitHorizontal: () => void
     onClose: () => void
     className?: string
+    id: string
 }) => {
+    const dispatch = useDispatch();
+    const onDrop = (nodeId: string, windowId: number) => {
+        console.log("dropping from " + nodeId + " to " + props.id + " window with id " + windowId);
+        dispatch(moveWindowBetweenNodes(nodeId, props.id, windowId))
+    };
+    const [{isOver}, drop] = useDrop({
+        accept: "draggableWindow",
+        drop: (item, monitor) => onDrop(monitor.getItem().nodeId, monitor.getItem().windowId),
+        collect: monitor => ({
+            isOver: monitor.isOver(),
+        }),
+    });
+
     return (
-        <div className={props.className}>
+        <div className={props.className} ref={drop} style={isOver ? {backgroundColor: "#FF000"} : {}}>
             <DockHeader>
                 <HeaderTitle>
                     Header

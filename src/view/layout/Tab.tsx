@@ -10,5 +10,9 @@ export default () => {
         console.log("tab does not exits");
         return <></>
     }
-    return <LayoutNode node={layout}/>
+    return (
+        <>
+            <LayoutNode node={layout}/>
+        </>
+    )
 };
