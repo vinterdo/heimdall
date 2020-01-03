@@ -4,8 +4,8 @@ import {closeNode, splitNodeHorizontally, splitNodeVertically} from "../../store
 import SplitPane from "react-split-pane";
 import React from "react";
 import Dock from "./Dock";
-import DraggableWindow from "../draggableWindows/DraggableWindow"
 import {AppState} from "../../store/store";
+import DraggableWindow from "./DraggableWindow";
 
 const LayoutNode = (props: { node: ILayoutNode }) => {
     const dispatch = useDispatch();

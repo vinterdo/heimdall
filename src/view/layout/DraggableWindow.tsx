@@ -3,6 +3,8 @@ import styled from "styled-components";
 import * as React from "react";
 import {useSelector} from "react-redux";
 import {AppState} from "../../store/store";
+import Reparentable from "./Reparentable";
+import Select from "react-select";
 
 const DraggableWindow = (props: { className?: string, windowId: number }) => {
     const nodeId = useSelector((state: AppState) => state.layout.windowToNode[props.windowId]);
@@ -18,9 +20,13 @@ const DraggableWindow = (props: { className?: string, windowId: number }) => {
     });
     return (
         <div ref={drag} style={{opacity}} className={props.className}>
-            <span>
-                {props.windowId}
-            </span>
+            <Reparentable uid={props.windowId}>
+                <Select options={[
+                    { value: 'chocolate', label: 'Chocolate' },
+                    { value: 'strawberry', label: 'Strawberry' },
+                    { value: 'vanilla', label: 'Vanilla' }
+                ]} />
+            </Reparentable>
         </div>
     )
 };
