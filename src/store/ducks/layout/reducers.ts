@@ -21,62 +21,11 @@ const initialState: ILayoutState = {
 };
 
 export default function layoutReducer(state = initialState, action: LayoutActionTypes): ILayoutState {
-
     switch (action.type) {
         case SPLIT_NODE_HORIZONTALLY_ACTION:
-            return (() => {
-                const newState = JSON.parse(JSON.stringify(state));
-                const currentTab = newState.tabs["default"];
-                if (currentTab === undefined) {
-                    console.error("current tab not found");
-                    return state;
-                }
-                const currentNode = findNodeByNodeId(action.payload.nodeId, currentTab);
-                if (currentNode === undefined) {
-                    console.error("current node not found");
-                    return state;
-                }
-
-                currentNode.a = Object.assign({}, currentNode);
-                currentNode.a.id += "a";
-                if (newState.nodeToWindow[currentNode.id]) {
-                    newState.nodeToWindow[currentNode.a.id] = newState.nodeToWindow[currentNode.id];
-                    newState.nodeToWindow[currentNode.id] = undefined;
-
-                    newState.windowToNode[newState.nodeToWindow[currentNode.a.id]] = currentNode.id + "a";
-                }
-                currentNode.b = {id: currentNode.id + "b"};
-                currentNode.split = "horizontal";
-                currentNode.percent = 50;
-                return newState;
-            })();
+            return windowSplit(state, action.payload.nodeId, "horizontal");
         case SPLIT_NODE_VERTICALLY_ACTION:
-            return (() => {
-                const newState = JSON.parse(JSON.stringify(state));
-                const currentTab = newState.tabs["default"];
-                if (currentTab === undefined) {
-                    console.error("current tab not found");
-                    return state;
-                }
-                const currentNode = findNodeByNodeId(action.payload.nodeId, currentTab);
-                if (currentNode === undefined) {
-                    console.error("current node not found");
-                    return state;
-                }
-
-                currentNode.a = Object.assign({}, currentNode);
-                currentNode.a.id += "a";
-                if (newState.nodeToWindow[currentNode.id]) {
-                    newState.nodeToWindow[currentNode.a.id] = newState.nodeToWindow[currentNode.id];
-                    newState.nodeToWindow[currentNode.id] = undefined;
-
-                    newState.windowToNode[newState.nodeToWindow[currentNode.a.id]] = currentNode.id + "a";
-                }
-                currentNode.b = {id: currentNode.id + "b"};
-                currentNode.split = "vertical";
-                currentNode.percent = 50;
-                return newState;
-            })();
+            return windowSplit(state, action.payload.nodeId, "vertical");
         case CLOSE_NODE_ACTION:
             /*
                 cases here:
@@ -107,11 +56,6 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                     return state;
                 }
 
-                //currentNodeParent.a = undefined;
-                //currentNodeParent.b = undefined;
-                //currentNodeParent.split = undefined;
-                //currentNodeParent.percent = undefined;
-
                 if (newState.nodeToWindow[action.payload.nodeId]) {
                     newState.windowToNode[newState.nodeToWindow[action.payload.nodeId]] = undefined;
                     newState.nodeToWindow[action.payload.nodeId] = undefined;
@@ -127,14 +71,14 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                     if (!node) {
                         return;
                     }
-                    if(node.a) {
+                    if (node.a) {
                         const windowId = newState.nodeToWindow[node.a.id];
                         newState.nodeToWindow[node.a.id] = undefined;
                         node.a.id = node.id + "a";
                         newState.nodeToWindow[node.a.id] = windowId;
                         newState.windowToNode[windowId] = node.a.id;
                     }
-                    if(node.b) {
+                    if (node.b) {
                         const windowId = newState.nodeToWindow[node.b.id];
                         newState.nodeToWindow[node.b.id] = undefined;
                         node.b.id = node.id + "b";
@@ -177,4 +121,31 @@ export default function layoutReducer(state = initialState, action: LayoutAction
         default:
             return state;
     }
+}
+
+function windowSplit(state: ILayoutState, nodeId:string, split : "horizontal" | "vertical") {
+    const newState = JSON.parse(JSON.stringify(state));
+    const currentTab = newState.tabs["default"];
+    if (currentTab === undefined) {
+        console.error("current tab not found");
+        return state;
+    }
+    const currentNode = findNodeByNodeId(nodeId, currentTab);
+    if (currentNode === undefined) {
+        console.error("current node not found");
+        return state;
+    }
+
+    currentNode.a = Object.assign({}, currentNode);
+    currentNode.a.id += "a";
+    if (newState.nodeToWindow[currentNode.id]) {
+        newState.nodeToWindow[currentNode.a.id] = newState.nodeToWindow[currentNode.id];
+        newState.nodeToWindow[currentNode.id] = undefined;
+
+        newState.windowToNode[newState.nodeToWindow[currentNode.a.id]] = currentNode.id + "a";
+    }
+    currentNode.b = {id: currentNode.id + "b"};
+    currentNode.split = split;
+    currentNode.percent = 50;
+    return newState;
 }

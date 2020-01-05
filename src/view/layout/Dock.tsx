@@ -70,7 +70,9 @@ const DockUnstyled = (props: {
                     <FontAwesomeIcon icon="times" onClick={props.onClose}/>
                 </HeaderIcons>
             </DockHeader>
+            <div style={isOver && !props.children ? {background: "#CCC", width: "100%", height: "100%"} : {width: "100%", height: "100%"}}>
             {props.children}
+            </div>
         </div>
     )
 };
