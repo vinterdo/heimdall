@@ -3,7 +3,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import {useDrop} from "react-dnd";
 import {useDispatch} from "react-redux";
-import * as ReactDOM from "react-dom";
 import {moveWindowBetweenNodes} from "../../store/ducks/layout/actions";
 
 const DockHeader = styled.div`
@@ -49,7 +48,6 @@ const DockUnstyled = (props: {
 }) => {
     const dispatch = useDispatch();
     const onDrop = (nodeId: string, windowId: number) => {
-        console.log("dropping from " + nodeId + " to " + props.id + " window with id " + windowId);
         dispatch(moveWindowBetweenNodes(nodeId, props.id, windowId))
     };
     const [{isOver}, drop] = useDrop({
@@ -61,10 +59,10 @@ const DockUnstyled = (props: {
     });
 
     return (
-        <div className={props.className} ref={drop} style={isOver ? {backgroundColor: "#FF000"} : {}}>
+        <div className={props.className} ref={drop}>
             <DockHeader>
                 <HeaderTitle>
-                    Header
+                    ID: [{props.id}]
                 </HeaderTitle>
                 <HeaderIcons>
                     <FontAwesomeIcon icon="grip-lines" onClick={props.onSplitHorizontal}/>

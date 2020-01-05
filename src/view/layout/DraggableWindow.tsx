@@ -21,11 +21,14 @@ const DraggableWindow = (props: { className?: string, windowId: number }) => {
     return (
         <div ref={drag} style={{opacity}} className={props.className}>
             <Reparentable uid={props.windowId}>
-                <Select options={[
-                    { value: 'chocolate', label: 'Chocolate' },
-                    { value: 'strawberry', label: 'Strawberry' },
-                    { value: 'vanilla', label: 'Vanilla' }
-                ]} />
+                <div>
+                    <Select options={[
+                        {value: 'chocolate', label: 'Chocolate'},
+                        {value: 'strawberry', label: 'Strawberry'},
+                        {value: 'vanilla', label: 'Vanilla'}
+                    ]}/>
+                    <input type={"text"}/>
+                </div>
             </Reparentable>
         </div>
     )
