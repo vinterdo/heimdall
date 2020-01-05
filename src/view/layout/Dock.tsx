@@ -48,6 +48,9 @@ const DockUnstyled = (props: {
 }) => {
     const dispatch = useDispatch();
     const onDrop = (nodeId: string, windowId: number) => {
+        if(nodeId === props.id) {
+            return;
+        }
         dispatch(moveWindowBetweenNodes(nodeId, props.id, windowId))
     };
     const [{isOver}, drop] = useDrop({
