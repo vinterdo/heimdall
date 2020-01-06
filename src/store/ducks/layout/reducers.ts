@@ -2,7 +2,7 @@ import {
     CLOSE_NODE_ACTION, ILayoutNode,
     ILayoutState,
     LayoutActionTypes,
-    MOVE_WINDOW_BETWEEN_NODES,
+    MOVE_WINDOW_BETWEEN_NODES, OPEN_NEW_WINDOW,
     SPLIT_NODE_HORIZONTALLY_ACTION,
     SPLIT_NODE_VERTICALLY_ACTION
 } from "./types";
@@ -13,10 +13,10 @@ const initialState: ILayoutState = {
         "default": {id: "", a: undefined, b: undefined}
     },
     windowToNode: {
-        1: ""
     },
     nodeToWindow: {
-        "": 1
+    },
+    windowIdToType: {
     }
 };
 
@@ -118,6 +118,20 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                 newState.nodeToWindow[action.payload.oldNodeId] = undefined;
                 return newState;
             })();
+        case OPEN_NEW_WINDOW:
+            return (() => {
+                const newState = JSON.parse(JSON.stringify(state));
+                const currentTab = newState.tabs["default"];
+                if (currentTab === undefined) {
+                    console.error("current tab not found");
+                    return state;
+                }
+                newState.nodeToWindow[action.payload.nodeId] = action.payload.windowId;
+                newState.windowToNode[action.payload.windowId] = action.payload.nodeId;
+                newState.windowIdToType[action.payload.windowId] = action.payload.windowType;
+                return newState;
+            })();
+
         default:
             return state;
     }

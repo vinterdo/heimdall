@@ -10,6 +10,9 @@ export interface ILayoutState {
     nodeToWindow: {
         [key: string]: number
     }
+    windowIdToType: {
+        [key: number]: string
+    }
 }
 
 export interface ILayoutNode {
@@ -26,6 +29,7 @@ export const SPLIT_NODE_VERTICALLY_ACTION = "SPLIT_NODE_VERTICALLY_ACTION";
 export const SPLIT_NODE_HORIZONTALLY_ACTION = "SPLIT_NODE_HORIZONTALLY_ACTION";
 export const CLOSE_NODE_ACTION = "CLOSE_NODE_ACTION";
 export const MOVE_WINDOW_BETWEEN_NODES = "MOVE_WINDOW_BETWEEN_NODES";
+export const OPEN_NEW_WINDOW = "OPEN_NEW_WINDOW";
 
 export interface ISplitNodeVerticallyAction {
     type: typeof SPLIT_NODE_VERTICALLY_ACTION
@@ -57,4 +61,13 @@ export interface IMoveNodeBetweenWindows {
     }
 }
 
-export type LayoutActionTypes = ICloseNodeAction | ISplitNodeHorizontallyAction | ISplitNodeVerticallyAction | IMoveNodeBetweenWindows;
+export interface IOpenNewWindow {
+    type: typeof OPEN_NEW_WINDOW,
+    payload: {
+        nodeId: string,
+        windowId: number,
+        windowType: string
+    }
+}
+
+export type LayoutActionTypes = ICloseNodeAction | ISplitNodeHorizontallyAction | ISplitNodeVerticallyAction | IMoveNodeBetweenWindows | IOpenNewWindow;

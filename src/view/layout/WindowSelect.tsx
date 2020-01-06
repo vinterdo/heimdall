@@ -2,7 +2,6 @@ import {useState} from "react";
 import * as React from "react";
 import Autosuggest, {SuggestionSelectedEventData} from "react-autosuggest";
 import windowFactory from "./WindowFactory";
-import Reparentable from "./Reparentable";
 
 interface ISuggestion {
     name: string;
@@ -40,8 +39,7 @@ function shouldRenderSuggestions() {
 
 const onSuggestionSelected = (onSelected: (name: string) => void) => (
     event: React.FormEvent<any>,
-    {suggestion, suggestionValue, suggestionIndex, sectionIndex, method}: SuggestionSelectedEventData<{ name: string }>) =>
-{
+    {suggestion}: SuggestionSelectedEventData<{ name: string }>) => {
     onSelected(suggestion.name);
 };
 
@@ -75,18 +73,16 @@ export default (props: {
     };
 
     return (
-        <Reparentable uid={props.id}>
-            <Autosuggest
-                id={props.id}
-                suggestions={suggestions}
-                onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-                onSuggestionsClearRequested={onSuggestionsClearRequested}
-                shouldRenderSuggestions={shouldRenderSuggestions}
-                onSuggestionSelected={props.onSelected && onSuggestionSelected(props.onSelected)}
-                getSuggestionValue={getSuggestionValue}
-                renderSuggestion={renderSuggestion}
-                inputProps={inputProps}
-            />
-        </Reparentable>
+        <Autosuggest
+            id={props.id}
+            suggestions={suggestions}
+            onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+            onSuggestionsClearRequested={onSuggestionsClearRequested}
+            shouldRenderSuggestions={shouldRenderSuggestions}
+            onSuggestionSelected={props.onSelected && onSuggestionSelected(props.onSelected)}
+            getSuggestionValue={getSuggestionValue}
+            renderSuggestion={renderSuggestion}
+            inputProps={inputProps}
+        />
     );
 }

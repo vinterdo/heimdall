@@ -2,9 +2,12 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import {useDrop} from "react-dnd";
-import {useDispatch} from "react-redux";
-import {moveWindowBetweenNodes} from "../../store/ducks/layout/actions";
+import {useDispatch, useSelector} from "react-redux";
+import {moveWindowBetweenNodes, openNewWindow} from "../../store/ducks/layout/actions";
 import WindowSelect from "./WindowSelect";
+import windowFactory from "./WindowFactory";
+import DraggableWindow from "./DraggableWindow";
+import {AppState} from "../../store/store";
 
 const DockHeader = styled.div`
   color: #888;
@@ -40,7 +43,6 @@ const HeaderIcons = styled.div`
 
 
 const DockUnstyled = (props: {
-    children: React.ReactNode
     onSplitVertical: () => void
     onSplitHorizontal: () => void
     onClose: () => void
@@ -48,8 +50,10 @@ const DockUnstyled = (props: {
     id: string
 }) => {
     const dispatch = useDispatch();
+    const dockedWindow = useSelector((state: AppState) => state.layout.nodeToWindow[props.id]);
+    const windowType = useSelector((state: AppState) => state.layout.windowIdToType[dockedWindow]);
     const onDrop = (nodeId: string, windowId: number) => {
-        if(nodeId === props.id) {
+        if (nodeId === props.id) {
             return;
         }
         dispatch(moveWindowBetweenNodes(nodeId, props.id, windowId))
@@ -63,9 +67,12 @@ const DockUnstyled = (props: {
     });
 
     const onWindowSelect = (value: string) => {
+        const {id} = windowFactory.createWindow(value);
+        dispatch(openNewWindow(props.id, id, value));
         console.log("selected " + value);
     };
 
+    const renderer = windowFactory.getRenderer(windowType);
     return (
         <div className={props.className} ref={drop}>
             <DockHeader>
@@ -78,9 +85,17 @@ const DockUnstyled = (props: {
                     <FontAwesomeIcon icon="times" onClick={props.onClose}/>
                 </HeaderIcons>
             </DockHeader>
-            <div style={isOver && !props.children ? {background: "#CCC", width: "100%", height: "100%"} : {width: "100%", height: "100%"}}>
-            {props.children}
-                {!props.children && <WindowSelect id={props.id} placeholder={"Select window"} onSelected={onWindowSelect}/>}
+            <div style={isOver && !dockedWindow ? {background: "#CCC", width: "100%", height: "100%"} : {
+                width: "100%",
+                height: "100%"
+            }}>
+                {dockedWindow &&
+                <DraggableWindow windowId={dockedWindow}>
+                    <div>
+                        {renderer && renderer()}
+                    </div>
+                </DraggableWindow>}
+                {!dockedWindow && <WindowSelect id={props.id} placeholder={"Select window"} onSelected={onWindowSelect}/>}
             </div>
         </div>
     )

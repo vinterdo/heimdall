@@ -31,3 +31,14 @@ export function moveWindowBetweenNodes(oldNodeId: string, newNodeId: string, win
         }
     }
 }
+
+export function openNewWindow(nodeId: string, windowId: number, windowType: string): LayoutTypes.LayoutActionTypes {
+    return {
+        type: LayoutTypes.OPEN_NEW_WINDOW,
+        payload: {
+            nodeId,
+            windowId,
+            windowType
+        }
+    }
+}

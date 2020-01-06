@@ -1,6 +1,6 @@
 class WindowFactory {
     private templates: Map<string, () => React.ReactElement> = new Map<string, () => React.ReactElement>();
-    private static currentId = 0;
+    private static currentId = 1;
 
     public addTemplate(name: string, template: () => React.ReactElement ) {
         if(this.templates.has(name)) {
@@ -27,6 +27,10 @@ class WindowFactory {
 
     public getAvailableTemplates() : {name: string}[] {
         return Array.from(this.templates.keys()).map(name => {return {name}});
+    }
+
+    public getRenderer(name: string) {
+        return this.templates.get(name)
     }
 }
 

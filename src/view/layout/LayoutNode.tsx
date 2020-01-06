@@ -5,13 +5,11 @@ import SplitPane from "react-split-pane";
 import React from "react";
 import Dock from "./Dock";
 import {AppState} from "../../store/store";
-import DraggableWindow from "./DraggableWindow";
 
 const LayoutNode = (props: { node: ILayoutNode }) => {
     const dispatch = useDispatch();
     const currentNode = props.node;
-    const windowId = useSelector((state: AppState) => state.layout.nodeToWindow[currentNode.id]);
-
+    useSelector((state: AppState) => state.layout.nodeToWindow[currentNode.id]);
     const onClose = () => dispatch(closeNode(currentNode.id));
     const onSplitHorizontal = () => dispatch(splitNodeHorizontally(currentNode.id));
     const onSplitVertical = () => dispatch(splitNodeVertically(currentNode.id));
@@ -33,9 +31,7 @@ const LayoutNode = (props: { node: ILayoutNode }) => {
                 <Dock onClose={onClose}
                       onSplitHorizontal={onSplitHorizontal}
                       onSplitVertical={onSplitVertical}
-                      id={currentNode.id}>
-                    {windowId && <DraggableWindow windowId={windowId} />}
-                </Dock>
+                      id={currentNode.id} />
             )
 
     }
