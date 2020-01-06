@@ -25,14 +25,7 @@ const DraggableWindow = (props: { className?: string, windowId: number, children
         </div>
     )
 };
-//<div>
-//    <Select options={[
-//        {value: 'chocolate', label: 'Chocolate'},
-//        {value: 'strawberry', label: 'Strawberry'},
-//        {value: 'vanilla', label: 'Vanilla'}
-//    ]}/>
-//    <input type={"text"}/>
-//</div>
+
 export default styled(DraggableWindow)`
   width: 100%;
   height: 100%;

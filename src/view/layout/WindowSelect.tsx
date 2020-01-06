@@ -2,6 +2,7 @@ import {useState} from "react";
 import * as React from "react";
 import Autosuggest, {SuggestionSelectedEventData} from "react-autosuggest";
 import windowFactory from "./WindowFactory";
+import styled from "styled-components";
 
 interface ISuggestion {
     name: string;
@@ -43,11 +44,12 @@ const onSuggestionSelected = (onSelected: (name: string) => void) => (
     onSelected(suggestion.name);
 };
 
-export default (props: {
+const WindowSelect = (props: {
     id: string,
     onChange?: (id: string, newValue: string) => void,
     placeholder: string,
-    onSelected?: (name: string) => void
+    onSelected?: (name: string) => void,
+    className?: string
 }) => {
     const [value, setValue] = useState<string>("");
     const [suggestions, setSuggestions] = useState<ISuggestion[]>(getSuggestions(""));
@@ -73,16 +75,26 @@ export default (props: {
     };
 
     return (
-        <Autosuggest
-            id={props.id}
-            suggestions={suggestions}
-            onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-            onSuggestionsClearRequested={onSuggestionsClearRequested}
-            shouldRenderSuggestions={shouldRenderSuggestions}
-            onSuggestionSelected={props.onSelected && onSuggestionSelected(props.onSelected)}
-            getSuggestionValue={getSuggestionValue}
-            renderSuggestion={renderSuggestion}
-            inputProps={inputProps}
-        />
+        <div className={props.className}>
+            <Autosuggest
+                id={props.id}
+                suggestions={suggestions}
+                onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                onSuggestionsClearRequested={onSuggestionsClearRequested}
+                shouldRenderSuggestions={shouldRenderSuggestions}
+                onSuggestionSelected={props.onSelected && onSuggestionSelected(props.onSelected)}
+                getSuggestionValue={getSuggestionValue}
+                renderSuggestion={renderSuggestion}
+                inputProps={inputProps}
+            />
+        </div>
     );
-}
+};
+
+export default styled(WindowSelect)`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
