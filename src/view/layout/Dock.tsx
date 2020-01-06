@@ -88,9 +88,9 @@ const DockUnstyled = (props: {
                     <FontAwesomeIcon icon="times" onClick={props.onClose}/>
                 </HeaderIcons>
             </DockHeader>
-            <div style={isOver && !dockedWindow ? {background: "#CCC", width: "100%", height: "100%"} : {
+            <div style={isOver && !dockedWindow ? {background: "#CCC", width: "100%", height: "calc(100% - 1.5rem)"} : {
                 width: "100%",
-                height: "100%"
+                height: "calc(100% - 1.5rem)"
             }}>
                 {dockedWindow &&
                 <DraggableWindow windowId={dockedWindow}>
@@ -108,4 +108,5 @@ export default styled(DockUnstyled)`
   background: #FAFAFA;
   width: 100%;
   height: 100%;
+  overflow: auto;
 `;

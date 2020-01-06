@@ -2,8 +2,9 @@ import {useSelector} from "react-redux";
 import {AppState} from "../../store/store";
 import React from "react";
 import LayoutNode from "./LayoutNode";
+import styled from "styled-components";
 
-export default () => {
+const Tab = (props: {className?: string }) => {
     const tab = useSelector((store: AppState) => store.layout.tabs);
     const layout = tab["default"];
     if (layout === undefined) {
@@ -11,8 +12,13 @@ export default () => {
         return <></>
     }
     return (
-        <>
+        <div className={props.className}>
             <LayoutNode node={layout}/>
-        </>
+        </div>
     )
 };
+
+export default styled(Tab)`
+  width: 100vw;
+  height: 100vh;
+`
