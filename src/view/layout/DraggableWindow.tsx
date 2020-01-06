@@ -5,6 +5,7 @@ import {useSelector} from "react-redux";
 import {AppState} from "../../store/store";
 import Reparentable from "./Reparentable";
 import Select from "react-select";
+import windowFactory from "./WindowFactory";
 
 const DraggableWindow = (props: { className?: string, windowId: number }) => {
     const nodeId = useSelector((state: AppState) => state.layout.windowToNode[props.windowId]);
@@ -20,20 +21,28 @@ const DraggableWindow = (props: { className?: string, windowId: number }) => {
     });
     return (
         <div ref={drag} style={{opacity}} className={props.className}>
-            <Reparentable uid={props.windowId}>
-                <div>
-                    <Select options={[
-                        {value: 'chocolate', label: 'Chocolate'},
-                        {value: 'strawberry', label: 'Strawberry'},
-                        {value: 'vanilla', label: 'Vanilla'}
-                    ]}/>
-                    <input type={"text"}/>
-                </div>
+            <Reparentable uid={"" + props.windowId}>
+                {windowFactory.createWindow("Dropdown").window}
+
+
+
+
+
+
+
+
             </Reparentable>
         </div>
     )
 };
-
+//<div>
+//    <Select options={[
+//        {value: 'chocolate', label: 'Chocolate'},
+//        {value: 'strawberry', label: 'Strawberry'},
+//        {value: 'vanilla', label: 'Vanilla'}
+//    ]}/>
+//    <input type={"text"}/>
+//</div>
 export default styled(DraggableWindow)`
   width: 100%;
   height: 100%;

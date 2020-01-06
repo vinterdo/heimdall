@@ -8,10 +8,16 @@ import Tab from "./view/layout/Tab";
 import GlobalStyle from "./view/GlobalStyle";
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
+import windowFactory from "./view/layout/WindowFactory";
+import ExampleDropdown from "./view/exampleWindows/ExampleDropdown";
+import ExampleForm from "./view/exampleWindows/ExampleForm";
 
 library.add(faTimes, faGripLines, faGripLinesVertical);
 
 export const store = configureStore();
+
+windowFactory.addTemplate("Dropdown", () => {return (<ExampleDropdown/>)});
+windowFactory.addTemplate("Form", () => {return (<ExampleForm/>)});
 
 export default () => {
     return (

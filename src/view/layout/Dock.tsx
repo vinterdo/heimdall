@@ -4,6 +4,7 @@ import styled from "styled-components";
 import {useDrop} from "react-dnd";
 import {useDispatch} from "react-redux";
 import {moveWindowBetweenNodes} from "../../store/ducks/layout/actions";
+import WindowSelect from "./WindowSelect";
 
 const DockHeader = styled.div`
   color: #888;
@@ -61,6 +62,10 @@ const DockUnstyled = (props: {
         }),
     });
 
+    const onWindowSelect = (value: string) => {
+        console.log("selected " + value);
+    };
+
     return (
         <div className={props.className} ref={drop}>
             <DockHeader>
@@ -75,6 +80,7 @@ const DockUnstyled = (props: {
             </DockHeader>
             <div style={isOver && !props.children ? {background: "#CCC", width: "100%", height: "100%"} : {width: "100%", height: "100%"}}>
             {props.children}
+                {!props.children && <WindowSelect id={props.id} placeholder={"Select window"} onSelected={onWindowSelect}/>}
             </div>
         </div>
     )

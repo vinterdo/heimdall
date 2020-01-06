@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 interface IReparentableStore {
-    [key: number]: {
+    [key: string]: {
         mountNode:  HTMLElementTagNameMap["div"]
         inUse: boolean
     }
@@ -10,7 +10,7 @@ interface IReparentableStore {
 
 const store: IReparentableStore = {};
 
-function getMountNode(uid: number) {
+function getMountNode(uid: string) {
     if (!store[uid]) {
         store[uid] = {
             mountNode: document.createElement('div'),
@@ -23,7 +23,7 @@ function getMountNode(uid: number) {
     return store[uid].mountNode;
 }
 
-function removeMountNode(uid: number) {
+function removeMountNode(uid: string) {
     const record = store[uid];
 
     record.inUse = false;
@@ -37,7 +37,7 @@ function removeMountNode(uid: number) {
 }
 
 interface IReparentableProps {
-    uid: number;
+    uid: string;
     children: React.ReactElement
 }
 
