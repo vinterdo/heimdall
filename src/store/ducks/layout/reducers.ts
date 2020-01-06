@@ -1,5 +1,5 @@
 import {
-    CLOSE_NODE_ACTION, ILayoutNode,
+    CLOSE_NODE_ACTION, CREATE_NEW_TAB, ILayoutNode,
     ILayoutState,
     LayoutActionTypes,
     MOVE_WINDOW_BETWEEN_NODES, OPEN_NEW_WINDOW,
@@ -129,6 +129,15 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                 newState.nodeToWindow[action.payload.nodeId] = action.payload.windowId;
                 newState.windowToNode[action.payload.windowId] = action.payload.nodeId;
                 newState.windowIdToType[action.payload.windowId] = action.payload.windowType;
+                return newState;
+            })();
+        case CREATE_NEW_TAB:
+            return (() => {
+                if(state.tabs[action.payload.tabName]) {
+                    return state;
+                }
+                const newState: ILayoutState = JSON.parse(JSON.stringify(state));
+                newState.tabs[action.payload.tabName] = {id: "", a: undefined, b: undefined};
                 return newState;
             })();
 

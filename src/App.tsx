@@ -11,6 +11,7 @@ import Backend from 'react-dnd-html5-backend'
 import windowFactory from "./view/layout/WindowFactory";
 import ExampleDropdown from "./view/exampleWindows/ExampleDropdown";
 import ExampleForm from "./view/exampleWindows/ExampleForm";
+import TabsTopBar from "./view/layout/TabsTopBar";
 
 library.add(faTimes, faGripLines, faGripLinesVertical);
 
@@ -25,6 +26,7 @@ export default () => {
             <PersistGate loading={null} persistor={store.persistor}>
                 <GlobalStyle/>
                 <DndProvider backend={Backend}>
+                    <TabsTopBar/>
                     <Tab/>
                 </DndProvider>
             </PersistGate>

@@ -30,6 +30,7 @@ export const SPLIT_NODE_HORIZONTALLY_ACTION = "SPLIT_NODE_HORIZONTALLY_ACTION";
 export const CLOSE_NODE_ACTION = "CLOSE_NODE_ACTION";
 export const MOVE_WINDOW_BETWEEN_NODES = "MOVE_WINDOW_BETWEEN_NODES";
 export const OPEN_NEW_WINDOW = "OPEN_NEW_WINDOW";
+export const CREATE_NEW_TAB = "CREATE_NEW_TAB";
 
 export interface ISplitNodeVerticallyAction {
     type: typeof SPLIT_NODE_VERTICALLY_ACTION
@@ -70,4 +71,11 @@ export interface IOpenNewWindow {
     }
 }
 
-export type LayoutActionTypes = ICloseNodeAction | ISplitNodeHorizontallyAction | ISplitNodeVerticallyAction | IMoveNodeBetweenWindows | IOpenNewWindow;
+export interface ICreateNewTab {
+    type: typeof CREATE_NEW_TAB,
+    payload: {
+        tabName: string
+    }
+}
+
+export type LayoutActionTypes = ICloseNodeAction | ISplitNodeHorizontallyAction | ISplitNodeVerticallyAction | IMoveNodeBetweenWindows | IOpenNewWindow | ICreateNewTab;

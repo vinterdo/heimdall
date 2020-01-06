@@ -42,3 +42,12 @@ export function openNewWindow(nodeId: string, windowId: number, windowType: stri
         }
     }
 }
+
+export function createNewTab(tabName: string) {
+    return {
+        type: LayoutTypes.CREATE_NEW_TAB,
+        payload: {
+            tabName
+        }
+    }
+}
