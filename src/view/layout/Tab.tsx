@@ -5,16 +5,15 @@ import LayoutNode from "./LayoutNode";
 import styled from "styled-components";
 
 const Tab = (props: {className?: string }) => {
-    const tab = useSelector((store: AppState) => store.layout.tabs);
     const currentTab = useSelector((state: AppState) => state.layout.currentTab);
-    const layout = tab[currentTab];
-    if (layout === undefined) {
+    const tab = useSelector((store: AppState) => store.layout.tabs[currentTab]);
+    if (tab === undefined) {
         console.log("tab does not exits");
         return <></>
     }
     return (
         <div className={props.className}>
-            <LayoutNode node={layout}/>
+            <LayoutNode node={tab.rootNode}/>
         </div>
     )
 };

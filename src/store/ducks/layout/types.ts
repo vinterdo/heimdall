@@ -2,13 +2,15 @@
 
 export interface ILayoutState {
     tabs: {
-        [key: string]: ILayoutNode,
-    }
-    windowToNode: {
-        [key: number]: string,
-    },
-    nodeToWindow: {
-        [key: string]: number
+        [key: string]: {
+            rootNode: ILayoutNode
+            windowToNode: {
+                [key: number]: string,
+            },
+            nodeToWindow: {
+                [key: string]: number
+            }
+        },
     }
     windowIdToType: {
         [key: number]: string

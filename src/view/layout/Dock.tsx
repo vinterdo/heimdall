@@ -50,7 +50,8 @@ const DockUnstyled = (props: {
     id: string
 }) => {
     const dispatch = useDispatch();
-    const dockedWindow = useSelector((state: AppState) => state.layout.nodeToWindow[props.id]);
+    const currentTab = useSelector((state: AppState) => state.layout.currentTab);
+    const dockedWindow = useSelector((state: AppState) => state.layout.tabs[currentTab].nodeToWindow[props.id]);
     const windowType = useSelector((state: AppState) => state.layout.windowIdToType[dockedWindow]);
     const onDrop = (nodeId: string, windowId: number) => {
         if (nodeId === props.id) {

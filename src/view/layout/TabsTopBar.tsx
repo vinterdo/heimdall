@@ -7,6 +7,7 @@ import {createNewTab, switchTab} from "../../store/ducks/layout/actions";
 
 const TabsTopBar = (props: { className?: string }) => {
     const tabs = useSelector((state: AppState) => Object.keys(state.layout.tabs));
+    const currentTab = useSelector((state: AppState) => state.layout.currentTab);
     const [newTabName, setNewTabName] = useState<string | null>(null);
     const dispatch = useDispatch();
     const [isAdding, setAdding] = useState<boolean>(false);
@@ -34,7 +35,14 @@ const TabsTopBar = (props: { className?: string }) => {
 
     return (
         <div className={props.className}>
-            {tabs.map(tab => <button key={tab} onClick={onTabClick(tab)}> {tab} </button>)}
+            {
+                tabs.map(tab =>
+                    <button key={tab}
+                            onClick={onTabClick(tab)}
+                            style={{background: currentTab === tab ? "#CCC" : "#FFF"}}>
+                        {tab}
+                    </button>)
+            }
             {isAdding && <input type={"text"} onChange={onNameChange}/>}
             <button onClick={onPlus}>+</button>
         </div>

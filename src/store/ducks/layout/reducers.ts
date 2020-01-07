@@ -10,14 +10,13 @@ import {findNodeByNodeId} from "./utils";
 
 const initialState: ILayoutState = {
     tabs: {
-        "default": {id: "", a: undefined, b: undefined}
+        "default": {
+            rootNode: {id: "", a: undefined, b: undefined},
+            windowToNode: {},
+            nodeToWindow: {},
+        }
     },
-    windowToNode: {
-    },
-    nodeToWindow: {
-    },
-    windowIdToType: {
-    },
+    windowIdToType: {},
     currentTab: "default"
 };
 
@@ -36,8 +35,8 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                 4. closed node is empty, sibling has childs
              */
             return (() => {
-                const newState = JSON.parse(JSON.stringify(state));
-                const currentTab = newState.tabs["default"];
+                const newState: ILayoutState = JSON.parse(JSON.stringify(state));
+                const currentTab = newState.tabs[newState.currentTab];
                 if (currentTab === undefined) {
                     console.error("current tab not found");
                     return state;
@@ -45,7 +44,7 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                 const id = action.payload.nodeId;
                 const parentId = id.substr(0, id.length - 1);
                 const ownSide = id.substr(id.length - 1, id.length);
-                const currentNodeParent = findNodeByNodeId(parentId, currentTab);
+                const currentNodeParent = findNodeByNodeId(parentId, currentTab.rootNode);
                 if (currentNodeParent === undefined) {
                     console.error("current node parent not found");
                     return state;
@@ -57,14 +56,14 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                     return state;
                 }
 
-                if (newState.nodeToWindow[action.payload.nodeId]) {
-                    newState.windowToNode[newState.nodeToWindow[action.payload.nodeId]] = undefined;
-                    newState.nodeToWindow[action.payload.nodeId] = undefined;
+                if (currentTab.nodeToWindow[action.payload.nodeId]) {
+                    delete currentTab.windowToNode[currentTab.nodeToWindow[action.payload.nodeId]];
+                    delete currentTab.nodeToWindow[action.payload.nodeId];
                 }
-                if (newState.nodeToWindow[siblingNode.id]) {
-                    newState.nodeToWindow[parentId] = newState.nodeToWindow[siblingNode.id];
-                    newState.nodeToWindow[siblingNode.id] = undefined;
-                    newState.windowToNode[newState.nodeToWindow[parentId]] = parentId;
+                if (currentTab.nodeToWindow[siblingNode.id]) {
+                    currentTab.nodeToWindow[parentId] = currentTab.nodeToWindow[siblingNode.id];
+                    delete currentTab.nodeToWindow[siblingNode.id];
+                    currentTab.windowToNode[currentTab.nodeToWindow[parentId]] = parentId;
                 }
 
                 // reduce sibling tree to parent
@@ -73,18 +72,18 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                         return;
                     }
                     if (node.a) {
-                        const windowId = newState.nodeToWindow[node.a.id];
-                        newState.nodeToWindow[node.a.id] = undefined;
+                        const windowId = currentTab.nodeToWindow[node.a.id];
+                        delete currentTab.nodeToWindow[node.a.id];
                         node.a.id = node.id + "a";
-                        newState.nodeToWindow[node.a.id] = windowId;
-                        newState.windowToNode[windowId] = node.a.id;
+                        currentTab.nodeToWindow[node.a.id] = windowId;
+                        currentTab.windowToNode[windowId] = node.a.id;
                     }
                     if (node.b) {
-                        const windowId = newState.nodeToWindow[node.b.id];
-                        newState.nodeToWindow[node.b.id] = undefined;
+                        const windowId = currentTab.nodeToWindow[node.b.id];
+                        delete currentTab.nodeToWindow[node.b.id];
                         node.b.id = node.id + "b";
-                        newState.nodeToWindow[node.b.id] = windowId;
-                        newState.windowToNode[windowId] = node.b.id;
+                        currentTab.nodeToWindow[node.b.id] = windowId;
+                        currentTab.windowToNode[windowId] = node.b.id;
                     } else {
 
                     }
@@ -102,48 +101,46 @@ export default function layoutReducer(state = initialState, action: LayoutAction
             })();
         case MOVE_WINDOW_BETWEEN_NODES:
             return (() => {
-                const newState = JSON.parse(JSON.stringify(state));
-                const currentTab = newState.tabs["default"];
+                const newState: ILayoutState = JSON.parse(JSON.stringify(state));
+                const currentTab = newState.tabs[newState.currentTab];
                 if (currentTab === undefined) {
                     console.error("current tab not found");
                     return state;
                 }
-                const oldNode = findNodeByNodeId(action.payload.oldNodeId, currentTab);
-                const newNode = findNodeByNodeId(action.payload.newNodeId, currentTab); // TODO: old node not needed?
-                if (!newNode || !oldNode) {
-                    console.error("nodes do not exist");
-                    return state;
-                }
-                newState.windowToNode[action.payload.windowId] = newNode.id;
-                newState.nodeToWindow[action.payload.newNodeId] = action.payload.windowId;
-                newState.nodeToWindow[action.payload.oldNodeId] = undefined;
+                currentTab.windowToNode[action.payload.windowId] = action.payload.newNodeId;
+                currentTab.nodeToWindow[action.payload.newNodeId] = action.payload.windowId;
+                delete currentTab.nodeToWindow[action.payload.oldNodeId];
                 return newState;
             })();
         case OPEN_NEW_WINDOW:
             return (() => {
-                const newState = JSON.parse(JSON.stringify(state));
-                const currentTab = newState.tabs["default"];
+                const newState: ILayoutState = JSON.parse(JSON.stringify(state));
+                const currentTab = newState.tabs[newState.currentTab];
                 if (currentTab === undefined) {
                     console.error("current tab not found");
                     return state;
                 }
-                newState.nodeToWindow[action.payload.nodeId] = action.payload.windowId;
-                newState.windowToNode[action.payload.windowId] = action.payload.nodeId;
+                currentTab.nodeToWindow[action.payload.nodeId] = action.payload.windowId;
+                currentTab.windowToNode[action.payload.windowId] = action.payload.nodeId;
                 newState.windowIdToType[action.payload.windowId] = action.payload.windowType;
                 return newState;
             })();
         case CREATE_NEW_TAB:
             return (() => {
-                if(state.tabs[action.payload.tabName]) {
+                if (state.tabs[action.payload.tabName]) {
                     return state;
                 }
                 const newState: ILayoutState = JSON.parse(JSON.stringify(state));
-                newState.tabs[action.payload.tabName] = {id: "", a: undefined, b: undefined};
+                newState.tabs[action.payload.tabName] = {
+                    rootNode: {id: "", a: undefined, b: undefined},
+                    nodeToWindow : {},
+                    windowToNode: {}
+                };
                 return newState;
             })();
         case SWITCH_TAB:
             return (() => {
-                if(!state.tabs[action.payload.tabName]) {
+                if (!state.tabs[action.payload.tabName]) {
                     return state;
                 }
                 const newState: ILayoutState = JSON.parse(JSON.stringify(state));
@@ -155,14 +152,14 @@ export default function layoutReducer(state = initialState, action: LayoutAction
     }
 }
 
-function windowSplit(state: ILayoutState, nodeId:string, split : "horizontal" | "vertical") {
-    const newState = JSON.parse(JSON.stringify(state));
-    const currentTab = newState.tabs["default"];
+function windowSplit(state: ILayoutState, nodeId: string, split: "horizontal" | "vertical") {
+    const newState: ILayoutState = JSON.parse(JSON.stringify(state));
+    const currentTab = newState.tabs[newState.currentTab];
     if (currentTab === undefined) {
         console.error("current tab not found");
         return state;
     }
-    const currentNode = findNodeByNodeId(nodeId, currentTab);
+    const currentNode = findNodeByNodeId(nodeId, currentTab.rootNode);
     if (currentNode === undefined) {
         console.error("current node not found");
         return state;
@@ -170,11 +167,11 @@ function windowSplit(state: ILayoutState, nodeId:string, split : "horizontal" | 
 
     currentNode.a = Object.assign({}, currentNode);
     currentNode.a.id += "a";
-    if (newState.nodeToWindow[currentNode.id]) {
-        newState.nodeToWindow[currentNode.a.id] = newState.nodeToWindow[currentNode.id];
-        newState.nodeToWindow[currentNode.id] = undefined;
+    if (currentTab.nodeToWindow[currentNode.id]) {
+        currentTab.nodeToWindow[currentNode.a.id] = currentTab.nodeToWindow[currentNode.id];
+        delete currentTab.nodeToWindow[currentNode.id];
 
-        newState.windowToNode[newState.nodeToWindow[currentNode.a.id]] = currentNode.id + "a";
+        currentTab.windowToNode[currentTab.nodeToWindow[currentNode.a.id]] = currentNode.id + "a";
     }
     currentNode.b = {id: currentNode.id + "b"};
     currentNode.split = split;

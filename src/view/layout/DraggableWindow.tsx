@@ -6,7 +6,8 @@ import {AppState} from "../../store/store";
 import Reparentable from "./Reparentable";
 
 const DraggableWindow = (props: { className?: string, windowId: number, children: React.ReactElement | undefined }) => {
-    const nodeId = useSelector((state: AppState) => state.layout.windowToNode[props.windowId]);
+    const currentTab = useSelector((state: AppState) => state.layout.currentTab);
+    const nodeId = useSelector((state: AppState) => state.layout.tabs[currentTab].windowToNode[props.windowId]);
     const [{opacity}, drag] = useDrag({
         item: {
             type: "draggableWindow",
