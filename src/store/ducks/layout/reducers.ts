@@ -4,7 +4,7 @@ import {
     LayoutActionTypes,
     MOVE_WINDOW_BETWEEN_NODES, OPEN_NEW_WINDOW,
     SPLIT_NODE_HORIZONTALLY_ACTION,
-    SPLIT_NODE_VERTICALLY_ACTION
+    SPLIT_NODE_VERTICALLY_ACTION, SWITCH_TAB
 } from "./types";
 import {findNodeByNodeId} from "./utils";
 
@@ -17,7 +17,8 @@ const initialState: ILayoutState = {
     nodeToWindow: {
     },
     windowIdToType: {
-    }
+    },
+    currentTab: "default"
 };
 
 export default function layoutReducer(state = initialState, action: LayoutActionTypes): ILayoutState {
@@ -140,7 +141,15 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                 newState.tabs[action.payload.tabName] = {id: "", a: undefined, b: undefined};
                 return newState;
             })();
-
+        case SWITCH_TAB:
+            return (() => {
+                if(!state.tabs[action.payload.tabName]) {
+                    return state;
+                }
+                const newState: ILayoutState = JSON.parse(JSON.stringify(state));
+                newState.currentTab = action.payload.tabName;
+                return newState;
+            })();
         default:
             return state;
     }

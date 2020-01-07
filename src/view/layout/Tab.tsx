@@ -6,7 +6,8 @@ import styled from "styled-components";
 
 const Tab = (props: {className?: string }) => {
     const tab = useSelector((store: AppState) => store.layout.tabs);
-    const layout = tab["default"];
+    const currentTab = useSelector((state: AppState) => state.layout.currentTab);
+    const layout = tab[currentTab];
     if (layout === undefined) {
         console.log("tab does not exits");
         return <></>

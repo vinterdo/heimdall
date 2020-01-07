@@ -3,7 +3,7 @@ import * as React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppState} from "../../store/store";
 import {useState} from "react";
-import {createNewTab} from "../../store/ducks/layout/actions";
+import {createNewTab, switchTab} from "../../store/ducks/layout/actions";
 
 const TabsTopBar = (props: { className?: string }) => {
     const tabs = useSelector((state: AppState) => Object.keys(state.layout.tabs));
@@ -28,9 +28,13 @@ const TabsTopBar = (props: { className?: string }) => {
         setNewTabName(event.target.value);
     };
 
+    const onTabClick = (tabName: string) => () => {
+        dispatch(switchTab(tabName));
+    };
+
     return (
         <div className={props.className}>
-            {tabs.map(tab => <button key={tab}> {tab} </button>)}
+            {tabs.map(tab => <button key={tab} onClick={onTabClick(tab)}> {tab} </button>)}
             {isAdding && <input type={"text"} onChange={onNameChange}/>}
             <button onClick={onPlus}>+</button>
         </div>

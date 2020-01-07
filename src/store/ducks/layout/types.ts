@@ -13,6 +13,7 @@ export interface ILayoutState {
     windowIdToType: {
         [key: number]: string
     }
+    currentTab: string
 }
 
 export interface ILayoutNode {
@@ -31,6 +32,7 @@ export const CLOSE_NODE_ACTION = "CLOSE_NODE_ACTION";
 export const MOVE_WINDOW_BETWEEN_NODES = "MOVE_WINDOW_BETWEEN_NODES";
 export const OPEN_NEW_WINDOW = "OPEN_NEW_WINDOW";
 export const CREATE_NEW_TAB = "CREATE_NEW_TAB";
+export const SWITCH_TAB = "SWITCH_TAB";
 
 export interface ISplitNodeVerticallyAction {
     type: typeof SPLIT_NODE_VERTICALLY_ACTION
@@ -78,4 +80,18 @@ export interface ICreateNewTab {
     }
 }
 
-export type LayoutActionTypes = ICloseNodeAction | ISplitNodeHorizontallyAction | ISplitNodeVerticallyAction | IMoveNodeBetweenWindows | IOpenNewWindow | ICreateNewTab;
+export interface ISwitchTab {
+    type: typeof SWITCH_TAB,
+    payload: {
+        tabName: string
+    }
+}
+
+export type LayoutActionTypes =
+    ICloseNodeAction |
+    ISplitNodeHorizontallyAction |
+    ISplitNodeVerticallyAction |
+    IMoveNodeBetweenWindows |
+    IOpenNewWindow |
+    ICreateNewTab |
+    ISwitchTab;

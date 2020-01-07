@@ -43,6 +43,15 @@ export function openNewWindow(nodeId: string, windowId: number, windowType: stri
     }
 }
 
+export function switchTab(tabName: string) {
+    return {
+        type: LayoutTypes.SWITCH_TAB,
+        payload: {
+            tabName
+        }
+    }
+}
+
 export function createNewTab(tabName: string) {
     return {
         type: LayoutTypes.CREATE_NEW_TAB,
