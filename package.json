@@ -32,13 +32,16 @@
     "react-select": "^3.0.8",
     "@types/react-select": "^3.0.8",
     "react-autosuggest": "^9.4.3",
-    "@types/react-autosuggest": "^9.3.13"
+    "@types/react-autosuggest": "^9.3.13",
+    "gh-pages": "^2.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -54,5 +57,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "homepage": "https://vinterdo.github.io/heimdall"
 }
