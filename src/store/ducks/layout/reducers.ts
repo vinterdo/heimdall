@@ -1,6 +1,6 @@
 import {
     CLOSE_NODE_ACTION, CREATE_NEW_TAB, ILayoutNode,
-    ILayoutState,
+    ILayoutState, ILayoutTab,
     LayoutActionTypes,
     MOVE_WINDOW_BETWEEN_NODES, OPEN_NEW_WINDOW,
     SPLIT_NODE_HORIZONTALLY_ACTION,
@@ -27,159 +27,148 @@ export default function layoutReducer(state = initialState, action: LayoutAction
         case SPLIT_NODE_VERTICALLY_ACTION:
             return windowSplit(state, action.payload.nodeId, "vertical");
         case CLOSE_NODE_ACTION:
-            /*
-                cases here:
-                1. closed node is empty, sibling is empty
-                2. closed node is full, sibling is empty
-                3. closed noe is empty, sibling has window
-                4. closed node is empty, sibling has childs
-             */
-            return (() => {
-                const newState: ILayoutState = JSON.parse(JSON.stringify(state));
-                const currentTab = newState.tabs[newState.currentTab];
-                if (currentTab === undefined) {
-                    console.error("current tab not found");
-                    return state;
-                }
-                const id = action.payload.nodeId;
-                const parentId = id.substr(0, id.length - 1);
-                const ownSide = id.substr(id.length - 1, id.length);
-                const currentNodeParent = findNodeByNodeId(parentId, currentTab.rootNode);
-                if (currentNodeParent === undefined) {
-                    console.error("current node parent not found");
-                    return state;
-                }
-                const siblingNode = ownSide === 'a' ? currentNodeParent.b : currentNodeParent.a;
-
-                if (siblingNode === undefined) {
-                    console.error("current node sibling not found");
-                    return state;
-                }
-
-                if (currentTab.nodeToWindow[action.payload.nodeId]) {
-                    delete currentTab.windowToNode[currentTab.nodeToWindow[action.payload.nodeId]];
-                    delete currentTab.nodeToWindow[action.payload.nodeId];
-                }
-                if (currentTab.nodeToWindow[siblingNode.id]) {
-                    currentTab.nodeToWindow[parentId] = currentTab.nodeToWindow[siblingNode.id];
-                    delete currentTab.nodeToWindow[siblingNode.id];
-                    currentTab.windowToNode[currentTab.nodeToWindow[parentId]] = parentId;
-                }
-
-                // reduce sibling tree to parent
-                function reduceNodeUp(node: ILayoutNode | undefined) {
-                    if (!node) {
-                        return;
-                    }
-                    if (node.a) {
-                        const windowId = currentTab.nodeToWindow[node.a.id];
-                        delete currentTab.nodeToWindow[node.a.id];
-                        node.a.id = node.id + "a";
-                        currentTab.nodeToWindow[node.a.id] = windowId;
-                        currentTab.windowToNode[windowId] = node.a.id;
-                    }
-                    if (node.b) {
-                        const windowId = currentTab.nodeToWindow[node.b.id];
-                        delete currentTab.nodeToWindow[node.b.id];
-                        node.b.id = node.id + "b";
-                        currentTab.nodeToWindow[node.b.id] = windowId;
-                        currentTab.windowToNode[windowId] = node.b.id;
-                    } else {
-
-                    }
-                    reduceNodeUp(node.a);
-                    reduceNodeUp(node.b);
-                }
-
-                currentNodeParent.a = siblingNode.a;
-                currentNodeParent.b = siblingNode.b;
-                currentNodeParent.split = siblingNode.split;
-                currentNodeParent.splitValue = siblingNode.splitValue;
-                reduceNodeUp(currentNodeParent);
-
-                return newState;
-            })();
+            return doCloseNode(state, action.payload.nodeId);
         case MOVE_WINDOW_BETWEEN_NODES:
-            return (() => {
-                const newState: ILayoutState = JSON.parse(JSON.stringify(state));
-                const currentTab = newState.tabs[newState.currentTab];
-                if (currentTab === undefined) {
-                    console.error("current tab not found");
-                    return state;
-                }
-                currentTab.windowToNode[action.payload.windowId] = action.payload.newNodeId;
-                currentTab.nodeToWindow[action.payload.newNodeId] = action.payload.windowId;
-                delete currentTab.nodeToWindow[action.payload.oldNodeId];
-                return newState;
-            })();
+            return doMoveWindowBetweenNodes(state, action.payload);
         case OPEN_NEW_WINDOW:
-            return (() => {
-                const newState: ILayoutState = JSON.parse(JSON.stringify(state));
-                const currentTab = newState.tabs[newState.currentTab];
-                if (currentTab === undefined) {
-                    console.error("current tab not found");
-                    return state;
-                }
-                currentTab.nodeToWindow[action.payload.nodeId] = action.payload.windowId;
-                currentTab.windowToNode[action.payload.windowId] = action.payload.nodeId;
-                newState.windowIdToType[action.payload.windowId] = action.payload.windowType;
-                return newState;
-            })();
+            return doOpenNewWindow(state, action.payload);
         case CREATE_NEW_TAB:
-            return (() => {
-                if (state.tabs[action.payload.tabName]) {
-                    return state;
-                }
-                const newState: ILayoutState = JSON.parse(JSON.stringify(state));
-                newState.tabs[action.payload.tabName] = {
-                    rootNode: {id: "", a: undefined, b: undefined},
-                    nodeToWindow : {},
-                    windowToNode: {}
-                };
-                return newState;
-            })();
+            return doCreateNewTab(state, action.payload.tabName);
         case SWITCH_TAB:
-            return (() => {
-                if (!state.tabs[action.payload.tabName]) {
-                    return state;
-                }
-                const newState: ILayoutState = JSON.parse(JSON.stringify(state));
-                newState.currentTab = action.payload.tabName;
-                return newState;
-            })();
+            return doSwitchTab(state, action.payload.tabName);
         case UPDATE_SPLIT_VALUE:
             return doUpdateSplitValue(state, action.payload.nodeId, action.payload.newSplit);
         default:
             return state;
     }
 }
-function doUpdateSplitValue(state: ILayoutState, nodeId: string, newSplit: number): ILayoutState {
-    const newState: ILayoutState = JSON.parse(JSON.stringify(state));
+
+function copyState(oldState: ILayoutState): {newState: ILayoutState, currentTab: ILayoutTab} {
+    const newState: ILayoutState = JSON.parse(JSON.stringify(oldState));
     const currentTab = newState.tabs[newState.currentTab];
     if (currentTab === undefined) {
-        console.error("current tab not found");
+        throw Error("current tab not found, state malformed");
+    }
+    return {newState,currentTab};
+}
+
+function doOpenNewWindow(state: ILayoutState, payload: {nodeId: string, windowId: number, windowType: string}) {
+    const {nodeId, windowId, windowType} = payload;
+    const {newState, currentTab} = copyState(state);
+    currentTab.nodeToWindow[nodeId] = windowId;
+    currentTab.windowToNode[windowId] = nodeId;
+    newState.windowIdToType[windowId] = windowType;
+    return newState;
+}
+
+function doCreateNewTab(state: ILayoutState, tabName: string) {
+    if (state.tabs[tabName]) {
         return state;
     }
+    const {newState} = copyState(state);
+    newState.tabs[tabName] = {
+        rootNode: {id: "", a: undefined, b: undefined},
+        nodeToWindow: {},
+        windowToNode: {}
+    };
+    newState.currentTab = tabName;
+    return newState;
+}
+
+function doSwitchTab(state: ILayoutState, tabName: string) {
+    if (!state.tabs[tabName]) {
+        return state;
+    }
+    const {newState} = copyState(state);
+    newState.currentTab = tabName;
+    return newState;
+}
+
+function doCloseNode(state: ILayoutState, nodeId: string) {
+    /*
+        cases here:
+        1. closed node is empty, sibling is empty
+        2. closed node is full, sibling is empty
+        3. closed noe is empty, sibling has window
+        4. closed node is empty, sibling has childs
+     */
+    const {newState, currentTab} = copyState(state);
+    const id = nodeId;
+    const parentId = id.substr(0, id.length - 1);
+    const ownSide = id.substr(id.length - 1, id.length);
+    const currentNodeParent = findNodeByNodeId(parentId, currentTab.rootNode);
+    if (currentNodeParent === undefined) {
+        throw Error("current node parent not found");
+    }
+    const siblingNode = ownSide === 'a' ? currentNodeParent.b : currentNodeParent.a;
+
+    if (siblingNode === undefined) {
+        throw Error("current node sibling not found");
+    }
+
+    if (currentTab.nodeToWindow[nodeId]) {
+        delete currentTab.windowToNode[currentTab.nodeToWindow[nodeId]];
+        delete currentTab.nodeToWindow[nodeId];
+    }
+    if (currentTab.nodeToWindow[siblingNode.id]) {
+        currentTab.nodeToWindow[parentId] = currentTab.nodeToWindow[siblingNode.id];
+        delete currentTab.nodeToWindow[siblingNode.id];
+        currentTab.windowToNode[currentTab.nodeToWindow[parentId]] = parentId;
+    }
+
+    // reduce sibling tree to parent
+    function reduceNodeUp(node: ILayoutNode | undefined) {
+        if (!node) {
+            return;
+        }
+        function handleChild(node: ILayoutNode | undefined, newId: string) {
+            if (node) {
+                const windowId = currentTab.nodeToWindow[node.id];
+                delete currentTab.nodeToWindow[node.id];
+                node.id = newId;
+                currentTab.nodeToWindow[node.id] = windowId;
+                currentTab.windowToNode[windowId] = node.id;
+            }
+        }
+        handleChild(node.a, node.id + "a");
+        handleChild(node.b, node.id + "b");
+        reduceNodeUp(node.a);
+        reduceNodeUp(node.b);
+    }
+
+    currentNodeParent.a = siblingNode.a;
+    currentNodeParent.b = siblingNode.b;
+    currentNodeParent.split = siblingNode.split;
+    currentNodeParent.splitValue = siblingNode.splitValue;
+    reduceNodeUp(currentNodeParent);
+
+    return newState;
+}
+
+function doMoveWindowBetweenNodes(state: ILayoutState, payload: {oldNodeId: string, newNodeId: string, windowId: number}) {
+    const {oldNodeId, newNodeId, windowId} = payload;
+    const {newState, currentTab} = copyState(state);
+    currentTab.windowToNode[windowId] = newNodeId;
+    currentTab.nodeToWindow[newNodeId] = windowId;
+    delete currentTab.nodeToWindow[oldNodeId];
+    return newState;
+}
+
+function doUpdateSplitValue(state: ILayoutState, nodeId: string, newSplit: number): ILayoutState {
+    const {newState, currentTab} = copyState(state);
     const currentNode = findNodeByNodeId(nodeId, currentTab.rootNode);
     if (currentNode === undefined) {
-        console.error("current node not found");
-        return state;
+        throw Error("current node not found");
     }
     currentNode.splitValue = newSplit;
     return newState;
 }
 
 function windowSplit(state: ILayoutState, nodeId: string, split: "horizontal" | "vertical") {
-    const newState: ILayoutState = JSON.parse(JSON.stringify(state));
-    const currentTab = newState.tabs[newState.currentTab];
-    if (currentTab === undefined) {
-        console.error("current tab not found");
-        return state;
-    }
+    const {newState, currentTab} = copyState(state);
     const currentNode = findNodeByNodeId(nodeId, currentTab.rootNode);
     if (currentNode === undefined) {
-        console.error("current node not found");
-        return state;
+        throw Error("current node not found");
     }
 
     currentNode.a = Object.assign({}, currentNode);
