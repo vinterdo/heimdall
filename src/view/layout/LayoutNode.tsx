@@ -4,6 +4,11 @@ import {closeNode, splitNodeHorizontally, splitNodeVertically} from "../../store
 import SplitPane from "react-split-pane";
 import React from "react";
 import Dock from "./Dock";
+import styled from "styled-components";
+
+const SplitPaneStyled = styled(SplitPane)`
+  position: relative !important;
+`;
 
 const LayoutNode = (props: { node: ILayoutNode }) => {
     const dispatch = useDispatch();
@@ -19,10 +24,10 @@ const LayoutNode = (props: { node: ILayoutNode }) => {
                 return <>Error</>
             }
             return (
-                <SplitPane split={currentNode.split} minSize={"100px"} defaultSize={"50%"}>
+                <SplitPaneStyled split={currentNode.split} minSize={"100px"} defaultSize={"50%"}>
                     <LayoutNode node={currentNode.a}/>
                     <LayoutNode node={currentNode.b}/>
-                </SplitPane>
+                </SplitPaneStyled>
             );
         case undefined:
             return (

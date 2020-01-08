@@ -19,6 +19,6 @@ const Tab = (props: {className?: string }) => {
 };
 
 export default styled(Tab)`
-  width: 100vw;
-  height: 100vh;
+  flex-grow: 1;
+  display: flex;
 `

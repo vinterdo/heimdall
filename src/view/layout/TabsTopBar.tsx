@@ -5,6 +5,10 @@ import {AppState} from "../../store/store";
 import {useState} from "react";
 import {createNewTab, switchTab} from "../../store/ducks/layout/actions";
 
+const PlusButton = styled.button`
+  background: #EEE;
+`;
+
 const TabsTopBar = (props: { className?: string }) => {
     const tabs = useSelector((state: AppState) => Object.keys(state.layout.tabs));
     const currentTab = useSelector((state: AppState) => state.layout.currentTab);
@@ -39,12 +43,12 @@ const TabsTopBar = (props: { className?: string }) => {
                 tabs.map(tab =>
                     <button key={tab}
                             onClick={onTabClick(tab)}
-                            style={{background: currentTab === tab ? "#CCC" : "#FFF"}}>
+                            style={{background: currentTab === tab ? "#DDD" : "#EFEFEF"}}>
                         {tab}
                     </button>)
             }
             {isAdding && <input type={"text"} onChange={onNameChange}/>}
-            <button onClick={onPlus}>+</button>
+            <PlusButton onClick={onPlus}>+</PlusButton>
         </div>
     );
 };
@@ -53,6 +57,9 @@ export default styled(TabsTopBar)`
   display: flex;
   flex-direction: row;
   &>button {
-    padding: 0.2rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-right: 2px solid white;
   }
 `;

@@ -41,6 +41,14 @@ const HeaderIcons = styled.div`
   }
 `;
 
+const DockingAreaRaw = (props: { children: React.ReactElement, isOver: boolean, className?: string }) => {
+    return <div className={props.className}>{props.children}</div>
+};
+
+const DockingArea = styled(DockingAreaRaw)`
+  flex-grow: 1;
+  background: ${props => props.isOver ? "#CCC" : "#FFF"};
+`;
 
 const DockUnstyled = (props: {
     onSplitVertical: () => void
@@ -57,7 +65,7 @@ const DockUnstyled = (props: {
         if (nodeId === props.id) {
             return;
         }
-        if(dockedWindow) {
+        if (dockedWindow) {
             return;
         }
         dispatch(moveWindowBetweenNodes(nodeId, props.id, windowId))
@@ -89,25 +97,25 @@ const DockUnstyled = (props: {
                     <FontAwesomeIcon icon="times" onClick={props.onClose}/>
                 </HeaderIcons>
             </DockHeader>
-            <div style={isOver && !dockedWindow ? {background: "#CCC", width: "100%", height: "calc(100% - 1.5rem)"} : {
-                width: "100%",
-                height: "calc(100% - 1.5rem)"
-            }}>
-                {dockedWindow &&
-                <DraggableWindow windowId={dockedWindow}>
-                    <div>
-                        {renderer && renderer()}
-                    </div>
-                </DraggableWindow>}
-                {!dockedWindow && <WindowSelect id={props.id} placeholder={"Select window"} onSelected={onWindowSelect}/>}
-            </div>
+            <DockingArea isOver={isOver && !dockedWindow}>
+                {dockedWindow ?
+                    <DraggableWindow windowId={dockedWindow}>
+                        <div>
+                            {renderer && renderer()}
+                        </div>
+                    </DraggableWindow> :
+                    <WindowSelect id={props.id} placeholder={"Select window"} onSelected={onWindowSelect}/>}
+            </DockingArea>
         </div>
     )
 };
 
 export default styled(DockUnstyled)`
   background: #FAFAFA;
-  width: 100%;
-  height: 100%;
   overflow: auto;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-grow: 1;
+  flex-direction: column;
 `;

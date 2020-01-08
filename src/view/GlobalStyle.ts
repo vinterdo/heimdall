@@ -1,6 +1,10 @@
 import {createGlobalStyle} from "styled-components";
 
 export default createGlobalStyle`
+  html {
+    height: 100%;
+    width: 100%;
+  }
   body {
     width: 100%;
     height: 100%;
@@ -10,6 +14,10 @@ export default createGlobalStyle`
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  #root {
+    height: 100%;
+    width: 100%;
   }
   .Resizer {
     background: #000;
