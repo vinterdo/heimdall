@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.js": "/heimdall/static/js/main.9c3282fc.chunk.js",
+    "main.js.map": "/heimdall/static/js/main.9c3282fc.chunk.js.map",
+    "runtime-main.js": "/heimdall/static/js/runtime-main.816454ba.js",
+    "runtime-main.js.map": "/heimdall/static/js/runtime-main.816454ba.js.map",
+    "static/js/2.9da58296.chunk.js": "/heimdall/static/js/2.9da58296.chunk.js",
+    "static/js/2.9da58296.chunk.js.map": "/heimdall/static/js/2.9da58296.chunk.js.map",
+    "index.html": "/heimdall/index.html",
+    "precache-manifest.20e05c41f95e57d6441e816e2dd87a24.js": "/heimdall/precache-manifest.20e05c41f95e57d6441e816e2dd87a24.js",
+    "service-worker.js": "/heimdall/service-worker.js",
+    "static/js/2.9da58296.chunk.js.LICENSE": "/heimdall/static/js/2.9da58296.chunk.js.LICENSE"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.816454ba.js",
+    "static/js/2.9da58296.chunk.js",
+    "static/js/main.9c3282fc.chunk.js"
+  ]
+}
