@@ -3,7 +3,8 @@ import * as React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppState} from "../../store/store";
 import {useState} from "react";
-import {createNewTab, switchTab} from "../../store/ducks/layout/actions";
+import {closeTab, createNewTab, switchTab} from "../../store/ducks/layout/actions";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const PlusButton = styled.button`
   background: #EEE;
@@ -37,6 +38,11 @@ const TabsTopBar = (props: { className?: string }) => {
         dispatch(switchTab(tabName));
     };
 
+    const onClose = (tabName: string) => (event: {stopPropagation: () => void}) => {
+        dispatch(closeTab(tabName));
+        event.stopPropagation();
+    };
+
     return (
         <div className={props.className}>
             {
@@ -45,6 +51,7 @@ const TabsTopBar = (props: { className?: string }) => {
                             onClick={onTabClick(tab)}
                             style={{background: currentTab === tab ? "#DDD" : "#EFEFEF"}}>
                         {tab}
+                        <FontAwesomeIcon icon="times" onClick={onClose(tab)}/>
                     </button>)
             }
             {isAdding && <input type={"text"} onChange={onNameChange}/>}

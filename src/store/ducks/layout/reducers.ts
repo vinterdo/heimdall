@@ -1,10 +1,17 @@
 import {
-    CLOSE_NODE_ACTION, CREATE_NEW_TAB, ILayoutNode,
-    ILayoutState, ILayoutTab,
+    CLOSE_NODE_ACTION,
+    CLOSE_TAB,
+    CREATE_NEW_TAB,
+    ILayoutNode,
+    ILayoutState,
+    ILayoutTab,
     LayoutActionTypes,
-    MOVE_WINDOW_BETWEEN_NODES, OPEN_NEW_WINDOW,
+    MOVE_WINDOW_BETWEEN_NODES,
+    OPEN_NEW_WINDOW,
     SPLIT_NODE_HORIZONTALLY_ACTION,
-    SPLIT_NODE_VERTICALLY_ACTION, SWITCH_TAB, UPDATE_SPLIT_VALUE
+    SPLIT_NODE_VERTICALLY_ACTION,
+    SWITCH_TAB,
+    UPDATE_SPLIT_VALUE
 } from "./types";
 import {findNodeByNodeId} from "./utils";
 
@@ -38,21 +45,50 @@ export default function layoutReducer(state = initialState, action: LayoutAction
             return doSwitchTab(state, action.payload.tabName);
         case UPDATE_SPLIT_VALUE:
             return doUpdateSplitValue(state, action.payload.nodeId, action.payload.newSplit);
+        case CLOSE_TAB:
+            return doCloseTab(state, action.payload.tabName);
         default:
             return state;
     }
 }
 
-function copyState(oldState: ILayoutState): {newState: ILayoutState, currentTab: ILayoutTab} {
+function copyState(oldState: ILayoutState): { newState: ILayoutState, currentTab: ILayoutTab } {
     const newState: ILayoutState = JSON.parse(JSON.stringify(oldState));
     const currentTab = newState.tabs[newState.currentTab];
     if (currentTab === undefined) {
         throw Error("current tab not found, state malformed");
     }
-    return {newState,currentTab};
+    return {newState, currentTab};
 }
 
-function doOpenNewWindow(state: ILayoutState, payload: {nodeId: string, windowId: number, windowType: string}) {
+function doCloseTab(state: ILayoutState, tabName: string) {
+    const {newState} = copyState(state);
+    // 1. remove all windows on this tab
+    // TODO
+    // 2. switch to previous tab
+    const keys = Object.keys(state.tabs);
+    if(keys.length === 1) {
+        // 4. do not allow to close last tab
+        // TODO: better handling
+        return state;
+    }
+    const currentTabIndex = keys.indexOf(tabName);
+    let nextTabIndex;
+    if(currentTabIndex === keys.length - 1) {
+        // if its last tab, switch to previous
+        nextTabIndex = keys.length - 2;
+    } else {
+        // else switch to next tab
+        nextTabIndex = currentTabIndex + 1;
+    }
+    newState.currentTab = keys[nextTabIndex];
+
+    // 3. remove tab
+    delete newState.tabs[tabName];
+    return newState;
+}
+
+function doOpenNewWindow(state: ILayoutState, payload: { nodeId: string, windowId: number, windowType: string }) {
     const {nodeId, windowId, windowType} = payload;
     const {newState, currentTab} = copyState(state);
     currentTab.nodeToWindow[nodeId] = windowId;
@@ -121,6 +157,7 @@ function doCloseNode(state: ILayoutState, nodeId: string) {
         if (!node) {
             return;
         }
+
         function handleChild(node: ILayoutNode | undefined, newId: string) {
             if (node) {
                 const windowId = currentTab.nodeToWindow[node.id];
@@ -130,6 +167,7 @@ function doCloseNode(state: ILayoutState, nodeId: string) {
                 currentTab.windowToNode[windowId] = node.id;
             }
         }
+
         handleChild(node.a, node.id + "a");
         handleChild(node.b, node.id + "b");
         reduceNodeUp(node.a);
@@ -145,7 +183,7 @@ function doCloseNode(state: ILayoutState, nodeId: string) {
     return newState;
 }
 
-function doMoveWindowBetweenNodes(state: ILayoutState, payload: {oldNodeId: string, newNodeId: string, windowId: number}) {
+function doMoveWindowBetweenNodes(state: ILayoutState, payload: { oldNodeId: string, newNodeId: string, windowId: number }) {
     const {oldNodeId, newNodeId, windowId} = payload;
     const {newState, currentTab} = copyState(state);
     currentTab.windowToNode[windowId] = newNodeId;

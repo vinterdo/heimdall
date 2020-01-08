@@ -61,12 +61,21 @@ export function createNewTab(tabName: string): LayoutTypes.LayoutActionTypes {
     }
 }
 
-export function updateSplitValue(nodeId: string, newSplit: number) {
+export function updateSplitValue(nodeId: string, newSplit: number): LayoutTypes.LayoutActionTypes {
     return {
         type: LayoutTypes.UPDATE_SPLIT_VALUE,
         payload: {
             nodeId,
             newSplit
+        }
+    }
+}
+
+export function closeTab(tabName: string): LayoutTypes.LayoutActionTypes {
+    return {
+        type: LayoutTypes.CLOSE_TAB,
+        payload: {
+            tabName
         }
     }
 }

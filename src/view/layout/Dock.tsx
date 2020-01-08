@@ -95,7 +95,7 @@ const DockUnstyled = (props: {
                 <HeaderIcons>
                     <FontAwesomeIcon icon="grip-lines" onClick={props.onSplitHorizontal}/>
                     <FontAwesomeIcon icon="grip-lines-vertical" onClick={props.onSplitVertical}/>
-                    <FontAwesomeIcon icon="times" onClick={props.onClose}/>
+                    {props.id !== "" && <FontAwesomeIcon icon="times" onClick={props.onClose}/>}
                 </HeaderIcons>
             </DockHeader>
             <DockingArea isOver={isOver && !dockedWindow}>
