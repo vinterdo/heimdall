@@ -1,13 +1,23 @@
 import {ILayoutNode} from "../../store/ducks/layout/types";
 import {useDispatch} from "react-redux";
-import {closeNode, splitNodeHorizontally, splitNodeVertically} from "../../store/ducks/layout/actions";
+import {
+    closeNode,
+    splitNodeHorizontally,
+    splitNodeVertically,
+    updateSplitValue
+} from "../../store/ducks/layout/actions";
 import SplitPane from "react-split-pane";
-import React from "react";
+import React, {useRef} from "react";
 import Dock from "./Dock";
 import styled from "styled-components";
 
 const SplitPaneStyled = styled(SplitPane)`
   position: relative !important;
+`;
+
+const SplitWrapper = styled.div`
+  width: 100%;
+  height: 100%;
 `;
 
 const LayoutNode = (props: { node: ILayoutNode }) => {
@@ -16,6 +26,14 @@ const LayoutNode = (props: { node: ILayoutNode }) => {
     const onClose = () => dispatch(closeNode(currentNode.id));
     const onSplitHorizontal = () => dispatch(splitNodeHorizontally(currentNode.id));
     const onSplitVertical = () => dispatch(splitNodeVertically(currentNode.id));
+    const splitRef = useRef(null);
+
+    const onDragFinished = (value: any) => {
+        const width = props.node.split === "vertical" ?
+            // @ts-ignore // typescript, wtf
+            splitRef.current.offsetWidth : splitRef.current.offsetHeight;
+        dispatch(updateSplitValue(currentNode.id, 100 * value / width))
+    };
 
     switch (currentNode.split) {
         case "vertical":
@@ -24,17 +42,25 @@ const LayoutNode = (props: { node: ILayoutNode }) => {
                 return <>Error</>
             }
             return (
-                <SplitPaneStyled split={currentNode.split} minSize={"100px"} defaultSize={"50%"}>
-                    <LayoutNode node={currentNode.a}/>
-                    <LayoutNode node={currentNode.b}/>
-                </SplitPaneStyled>
+                <SplitWrapper ref={splitRef}>
+                    <SplitPaneStyled
+                        split={currentNode.split}
+                        defaultSize={currentNode.splitValue + "%"}
+
+                        onDragFinished={onDragFinished}
+                        maxSize={-100}
+                    >
+                        <LayoutNode node={currentNode.a}/>
+                        <LayoutNode node={currentNode.b}/>
+                    </SplitPaneStyled>
+                </SplitWrapper>
             );
         case undefined:
             return (
                 <Dock onClose={onClose}
                       onSplitHorizontal={onSplitHorizontal}
                       onSplitVertical={onSplitVertical}
-                      id={currentNode.id} />
+                      id={currentNode.id}/>
             )
 
     }

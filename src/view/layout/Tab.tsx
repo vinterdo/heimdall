@@ -21,4 +21,6 @@ const Tab = (props: {className?: string }) => {
 export default styled(Tab)`
   flex-grow: 1;
   display: flex;
+  position: relative;
+  height: 100%;
 `

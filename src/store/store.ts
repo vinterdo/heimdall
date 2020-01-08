@@ -7,7 +7,7 @@ import * as layoutDuck from "./ducks/layout";
 const rootPersistConfig = {
     key: "root",
     storage,
-    whitelist: []
+    whitelist: ["layout"]
 };
 
 const appReducer = combineReducers({

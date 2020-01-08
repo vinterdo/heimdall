@@ -43,7 +43,7 @@ export function openNewWindow(nodeId: string, windowId: number, windowType: stri
     }
 }
 
-export function switchTab(tabName: string) {
+export function switchTab(tabName: string): LayoutTypes.LayoutActionTypes {
     return {
         type: LayoutTypes.SWITCH_TAB,
         payload: {
@@ -52,11 +52,21 @@ export function switchTab(tabName: string) {
     }
 }
 
-export function createNewTab(tabName: string) {
+export function createNewTab(tabName: string): LayoutTypes.LayoutActionTypes {
     return {
         type: LayoutTypes.CREATE_NEW_TAB,
         payload: {
             tabName
+        }
+    }
+}
+
+export function updateSplitValue(nodeId: string, newSplit: number) {
+    return {
+        type: LayoutTypes.UPDATE_SPLIT_VALUE,
+        payload: {
+            nodeId,
+            newSplit
         }
     }
 }

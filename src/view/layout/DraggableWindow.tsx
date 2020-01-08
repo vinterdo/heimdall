@@ -30,4 +30,7 @@ const DraggableWindow = (props: { className?: string, windowId: number, children
 export default styled(DraggableWindow)`
   width: 100%;
   height: 100%;
+  overflow: auto;
+  max-width: 100%;
+  max-height: 100%;
 `

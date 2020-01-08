@@ -4,7 +4,7 @@ import {
     LayoutActionTypes,
     MOVE_WINDOW_BETWEEN_NODES, OPEN_NEW_WINDOW,
     SPLIT_NODE_HORIZONTALLY_ACTION,
-    SPLIT_NODE_VERTICALLY_ACTION, SWITCH_TAB
+    SPLIT_NODE_VERTICALLY_ACTION, SWITCH_TAB, UPDATE_SPLIT_VALUE
 } from "./types";
 import {findNodeByNodeId} from "./utils";
 
@@ -94,7 +94,7 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                 currentNodeParent.a = siblingNode.a;
                 currentNodeParent.b = siblingNode.b;
                 currentNodeParent.split = siblingNode.split;
-                currentNodeParent.percent = siblingNode.percent;
+                currentNodeParent.splitValue = siblingNode.splitValue;
                 reduceNodeUp(currentNodeParent);
 
                 return newState;
@@ -147,9 +147,26 @@ export default function layoutReducer(state = initialState, action: LayoutAction
                 newState.currentTab = action.payload.tabName;
                 return newState;
             })();
+        case UPDATE_SPLIT_VALUE:
+            return doUpdateSplitValue(state, action.payload.nodeId, action.payload.newSplit);
         default:
             return state;
     }
+}
+function doUpdateSplitValue(state: ILayoutState, nodeId: string, newSplit: number): ILayoutState {
+    const newState: ILayoutState = JSON.parse(JSON.stringify(state));
+    const currentTab = newState.tabs[newState.currentTab];
+    if (currentTab === undefined) {
+        console.error("current tab not found");
+        return state;
+    }
+    const currentNode = findNodeByNodeId(nodeId, currentTab.rootNode);
+    if (currentNode === undefined) {
+        console.error("current node not found");
+        return state;
+    }
+    currentNode.splitValue = newSplit;
+    return newState;
 }
 
 function windowSplit(state: ILayoutState, nodeId: string, split: "horizontal" | "vertical") {
@@ -175,6 +192,6 @@ function windowSplit(state: ILayoutState, nodeId: string, split: "horizontal" | 
     }
     currentNode.b = {id: currentNode.id + "b"};
     currentNode.split = split;
-    currentNode.percent = 50;
+    currentNode.splitValue = 50;
     return newState;
 }

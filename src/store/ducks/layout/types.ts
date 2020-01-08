@@ -22,7 +22,7 @@ export interface ILayoutNode {
     a?: ILayoutNode,
     b?: ILayoutNode,
     id: string,
-    percent?: number,
+    splitValue?: number,
     split?: "vertical" | "horizontal"
 }
 
@@ -35,6 +35,7 @@ export const MOVE_WINDOW_BETWEEN_NODES = "MOVE_WINDOW_BETWEEN_NODES";
 export const OPEN_NEW_WINDOW = "OPEN_NEW_WINDOW";
 export const CREATE_NEW_TAB = "CREATE_NEW_TAB";
 export const SWITCH_TAB = "SWITCH_TAB";
+export const UPDATE_SPLIT_VALUE = "UPDATE_SPLIT_VALUE";
 
 export interface ISplitNodeVerticallyAction {
     type: typeof SPLIT_NODE_VERTICALLY_ACTION
@@ -89,6 +90,14 @@ export interface ISwitchTab {
     }
 }
 
+export interface IUpdateSplitValue {
+    type: typeof UPDATE_SPLIT_VALUE,
+    payload: {
+        nodeId: string,
+        newSplit: number
+    }
+}
+
 export type LayoutActionTypes =
     ICloseNodeAction |
     ISplitNodeHorizontallyAction |
@@ -96,4 +105,5 @@ export type LayoutActionTypes =
     IMoveNodeBetweenWindows |
     IOpenNewWindow |
     ICreateNewTab |
-    ISwitchTab;
+    ISwitchTab |
+    IUpdateSplitValue;
