@@ -32,8 +32,8 @@ export default createGlobalStyle`
   }
   
   .Resizer:hover {
-    -webkit-transition: all 2s ease;
-    transition: all 2s ease;
+    -webkit-transition: all 1s ease;
+    transition: all 1s ease;
   }
   
   .Resizer.horizontal {
@@ -75,7 +75,6 @@ export default createGlobalStyle`
   
 .react-autosuggest__container {
   position: relative;
-  margin-bottom: 200px;
 }
 
 .react-autosuggest__input {

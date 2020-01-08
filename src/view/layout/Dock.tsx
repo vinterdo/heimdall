@@ -48,6 +48,7 @@ const DockingAreaRaw = (props: { children: React.ReactElement, isOver: boolean, 
 const DockingArea = styled(DockingAreaRaw)`
   flex-grow: 1;
   background: ${props => props.isOver ? "#CCC" : "#FFF"};
+  overflow: auto;
 `;
 
 const DockUnstyled = (props: {
@@ -112,7 +113,6 @@ const DockUnstyled = (props: {
 
 export default styled(DockUnstyled)`
   background: #FAFAFA;
-  overflow: auto;
   display: flex;
   height: 100%;
   width: 100%;

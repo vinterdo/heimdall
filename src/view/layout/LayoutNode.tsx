@@ -12,7 +12,7 @@ import Dock from "./Dock";
 import styled from "styled-components";
 
 const SplitPaneStyled = styled(SplitPane)`
-  position: relative !important;
+  //position: relative !important;
 `;
 
 const SplitWrapper = styled.div`
@@ -46,9 +46,9 @@ const LayoutNode = (props: { node: ILayoutNode }) => {
                     <SplitPaneStyled
                         split={currentNode.split}
                         defaultSize={currentNode.splitValue + "%"}
-
                         onDragFinished={onDragFinished}
-                        maxSize={-100}
+                        maxSize={-1}
+                        minSize={0}
                     >
                         <LayoutNode node={currentNode.a}/>
                         <LayoutNode node={currentNode.b}/>

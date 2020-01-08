@@ -5,12 +5,20 @@ import Tab from "./Tab";
 import React from "react";
 import styled from "styled-components";
 
-const Layout = (props: {className?: string}) => {
+const TabWrapper = styled.div`
+  flex-grow: 1;
+  display: flex;
+  position: relative;
+`;
+
+const Layout = (props: { className?: string }) => {
     return (
         <div className={props.className}>
             <DndProvider backend={Backend}>
                 <TabsTopBar/>
-                <Tab/>
+                <TabWrapper>
+                    <Tab/>
+                </TabWrapper>
             </DndProvider>
         </div>
     );
