@@ -1,6 +1,6 @@
 import React from 'react';
 import {library} from "@fortawesome/fontawesome-svg-core";
-import {faGripLines, faGripLinesVertical, faTimes} from "@fortawesome/free-solid-svg-icons";
+import {faGripLines, faGripLinesVertical, faSearch, faTimes} from "@fortawesome/free-solid-svg-icons";
 import {PersistGate} from "redux-persist/integration/react";
 import configureStore from "./store/store";
 import {Provider} from "react-redux";
@@ -10,7 +10,7 @@ import ExampleDropdown from "./view/exampleWindows/ExampleDropdown";
 import ExampleForm from "./view/exampleWindows/ExampleForm";
 import Layout from "./view/layout/Layout";
 
-library.add(faTimes, faGripLines, faGripLinesVertical);
+library.add(faTimes, faGripLines, faGripLinesVertical, faSearch);
 
 export const store = configureStore();
 

@@ -79,3 +79,12 @@ export function closeTab(tabName: string): LayoutTypes.LayoutActionTypes {
         }
     }
 }
+
+export function closeWindow(nodeId: string): LayoutTypes.LayoutActionTypes {
+    return {
+        type: LayoutTypes.CLOSE_WINDOW,
+        payload: {
+            nodeId
+        }
+    }
+}

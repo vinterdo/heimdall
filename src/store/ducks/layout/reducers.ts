@@ -1,6 +1,7 @@
 import {
     CLOSE_NODE_ACTION,
     CLOSE_TAB,
+    CLOSE_WINDOW,
     CREATE_NEW_TAB,
     ILayoutNode,
     ILayoutState,
@@ -47,6 +48,8 @@ export default function layoutReducer(state = initialState, action: LayoutAction
             return doUpdateSplitValue(state, action.payload.nodeId, action.payload.newSplit);
         case CLOSE_TAB:
             return doCloseTab(state, action.payload.tabName);
+        case CLOSE_WINDOW:
+            return doCloseWindow(state, action.payload.nodeId);
         default:
             return state;
     }
@@ -59,6 +62,19 @@ function copyState(oldState: ILayoutState): { newState: ILayoutState, currentTab
         throw Error("current tab not found, state malformed");
     }
     return {newState, currentTab};
+}
+
+function doCloseWindow(state: ILayoutState, nodeId: string) {
+    const {newState, currentTab} = copyState(state);
+    const windowId = currentTab.nodeToWindow[nodeId];
+    if(!windowId) {
+        throw Error("window for node not found");
+    }
+    delete currentTab.nodeToWindow[nodeId];
+    delete currentTab.windowToNode[windowId];
+    delete newState.windowIdToType[windowId];
+
+    return newState;
 }
 
 function doCloseTab(state: ILayoutState, tabName: string) {

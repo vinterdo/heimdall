@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import {useDrop} from "react-dnd";
 import {useDispatch, useSelector} from "react-redux";
-import {moveWindowBetweenNodes, openNewWindow} from "../../store/ducks/layout/actions";
+import {closeWindow, moveWindowBetweenNodes, openNewWindow} from "../../store/ducks/layout/actions";
 import WindowSelect from "./WindowSelect";
 import windowFactory from "./WindowFactory";
 import DraggableWindow from "./DraggableWindow";
@@ -85,6 +85,10 @@ const DockUnstyled = (props: {
         console.log("selected " + value);
     };
 
+    const onSearchClick = () => {
+        dispatch(closeWindow(props.id));
+    };
+
     const renderer = windowFactory.getRenderer(windowType);
     return (
         <div className={props.className} ref={drop}>
@@ -95,6 +99,7 @@ const DockUnstyled = (props: {
                 <HeaderIcons>
                     <FontAwesomeIcon icon="grip-lines" onClick={props.onSplitHorizontal}/>
                     <FontAwesomeIcon icon="grip-lines-vertical" onClick={props.onSplitVertical}/>
+                    {dockedWindow && <FontAwesomeIcon icon="search" onClick={onSearchClick}/>}
                     {props.id !== "" && <FontAwesomeIcon icon="times" onClick={props.onClose}/>}
                 </HeaderIcons>
             </DockHeader>

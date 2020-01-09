@@ -39,6 +39,7 @@ export const CREATE_NEW_TAB = "CREATE_NEW_TAB";
 export const SWITCH_TAB = "SWITCH_TAB";
 export const UPDATE_SPLIT_VALUE = "UPDATE_SPLIT_VALUE";
 export const CLOSE_TAB = "CLOSE_TAB";
+export const CLOSE_WINDOW = "CLOSE_WINDOW";
 
 export interface ISplitNodeVerticallyAction {
     type: typeof SPLIT_NODE_VERTICALLY_ACTION
@@ -107,6 +108,12 @@ export interface ICloseTab {
         tabName: string
     }
 }
+export interface ICloseWindow {
+    type: typeof CLOSE_WINDOW,
+    payload: {
+        nodeId: string
+    }
+}
 
 export type LayoutActionTypes =
     ICloseNodeAction |
@@ -117,4 +124,5 @@ export type LayoutActionTypes =
     ICreateNewTab |
     ISwitchTab |
     IUpdateSplitValue |
-    ICloseTab;
+    ICloseTab |
+    ICloseWindow;
