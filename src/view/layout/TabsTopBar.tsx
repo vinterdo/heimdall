@@ -10,6 +10,11 @@ const PlusButton = styled.button`
   background: #EEE;
 `;
 
+const CloseTabCross = styled(FontAwesomeIcon)`
+  margin-left: 0.5rem;
+  color: #888;
+`;
+
 const TabsTopBar = (props: { className?: string }) => {
     const tabs = useSelector((state: AppState) => Object.keys(state.layout.tabs));
     const currentTab = useSelector((state: AppState) => state.layout.currentTab);
@@ -18,14 +23,13 @@ const TabsTopBar = (props: { className?: string }) => {
     const [isAdding, setAdding] = useState<boolean>(false);
 
     const onPlus = () => {
-        if(isAdding) {
+        if (isAdding) {
             setAdding(false);
-            if(!newTabName) {
+            if (!newTabName) {
                 return;
             }
             dispatch(createNewTab(newTabName));
-        }
-        else {
+        } else {
             setAdding(true);
         }
     };
@@ -38,7 +42,7 @@ const TabsTopBar = (props: { className?: string }) => {
         dispatch(switchTab(tabName));
     };
 
-    const onClose = (tabName: string) => (event: {stopPropagation: () => void}) => {
+    const onClose = (tabName: string) => (event: { stopPropagation: () => void }) => {
         dispatch(closeTab(tabName));
         event.stopPropagation();
     };
@@ -51,7 +55,10 @@ const TabsTopBar = (props: { className?: string }) => {
                             onClick={onTabClick(tab)}
                             style={{background: currentTab === tab ? "#DDD" : "#EFEFEF"}}>
                         {tab}
-                        <FontAwesomeIcon icon="times" onClick={onClose(tab)}/>
+                        {
+                            tabs.length > 1 &&
+                            <CloseTabCross icon="times" onClick={onClose(tab)}/>
+                        }
                     </button>)
             }
             {isAdding && <input type={"text"} onChange={onNameChange}/>}

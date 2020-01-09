@@ -64,17 +64,18 @@ function copyState(oldState: ILayoutState): { newState: ILayoutState, currentTab
 function doCloseTab(state: ILayoutState, tabName: string) {
     const {newState} = copyState(state);
     // 1. remove all windows on this tab
-    // TODO
+    Object.keys(newState.tabs[tabName].windowToNode).forEach((key: string) => {
+        delete newState.windowIdToType[parseInt(key, 10)];
+    });
     // 2. switch to previous tab
     const keys = Object.keys(state.tabs);
-    if(keys.length === 1) {
+    if (keys.length === 1) {
         // 4. do not allow to close last tab
-        // TODO: better handling
         return state;
     }
     const currentTabIndex = keys.indexOf(tabName);
     let nextTabIndex;
-    if(currentTabIndex === keys.length - 1) {
+    if (currentTabIndex === keys.length - 1) {
         // if its last tab, switch to previous
         nextTabIndex = keys.length - 2;
     } else {
