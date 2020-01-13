@@ -1,10 +1,10 @@
 import * as React from "react";
 
 interface IWindowRegistryEntry<T> {
-    windowNodeProducer: (params: T) => React.ReactElement
+    windowNodeProducer: (params: T, changeTitle: (title: string) => void) => React.ReactElement
     name: string
-    titleProducer?: (params: T) => string
-    paramsViewProducer?: (onSubmit: (params: T) => void) => React.ReactElement
+    defaultTitle?: string
+    paramsViewProducer?: (onSubmit: (params: T) => void, changeTitle: (title: string) => void) => React.ReactElement
 }
 
 class WindowFactory {
@@ -18,7 +18,7 @@ class WindowFactory {
         this.templates.set(entry.name, entry);
     }
 
-    public createWindow(name: string): { id: number, askForParams: boolean } {
+    public createWindow(name: string): { id: number, askForParams: boolean, title: string } {
         if (!this.templates.has(name)) {
             throw new Error("Template with name " + name + " is not registered");
         }
@@ -28,9 +28,11 @@ class WindowFactory {
         if (!entry) {
             throw new Error("Malformed state, this should never happen");
         }
+        const title = entry.defaultTitle || "";
         return {
             id,
-            askForParams: entry.paramsViewProducer !== undefined
+            askForParams: entry.paramsViewProducer !== undefined,
+            title
         }
     }
 

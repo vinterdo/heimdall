@@ -16,12 +16,13 @@ export const store = configureStore();
 
 windowFactory.addTemplate({
     name: "Dropdown",
-    windowNodeProducer: (params: any) => {
-        return (<ExampleDropdown.WindowRenderer params={params}/>)
+    windowNodeProducer: (params: any, changeTitle: (title: string) => void) => {
+        return (<ExampleDropdown.WindowRenderer params={params} onChange={changeTitle}/>)
     },
     paramsViewProducer: (onSubmit) => {
         return (<ExampleDropdown.ParamsRenderer onSubmit={onSubmit}/>)
-    }
+    },
+    defaultTitle: "Insert comma separated values for select..."
 });
 windowFactory.addTemplate({
     name: "Form", windowNodeProducer: () => {

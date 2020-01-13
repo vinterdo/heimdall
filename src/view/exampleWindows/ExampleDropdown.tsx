@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import Select from "react-select";
+import Select, {OptionTypeBase} from "react-select";
 import styled from "styled-components";
 
 const ParamsRendererWrapper = styled.div`
@@ -10,11 +10,20 @@ const ParamsRendererWrapper = styled.div`
   align-items: center;
 `;
 
-const WindowRenderer = (props: {params: string[]}) => {
+const WindowRenderer = (props: {params: string[], onChange: (title: string) => void}) => {
     const options = props.params.map(s => {return {value: s, label: s}});
+
+    const onChangeInner = (selectedOption: OptionTypeBase | undefined | null) => {
+        if(selectedOption) {
+            props.onChange(`Selected: ${selectedOption.value}`);
+        } else {
+            props.onChange(`Select...`);
+        }
+    };
+
     return (
         <div>
-            <Select options={options}/>
+            <Select options={options} onChange={onChangeInner}/>
         </div>
     )
 };

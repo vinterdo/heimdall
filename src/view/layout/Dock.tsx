@@ -3,7 +3,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import {useDrop} from "react-dnd";
 import {useDispatch, useSelector} from "react-redux";
-import {closeWindow, moveWindowBetweenNodes, openNewWindow, setWindowParams} from "../../store/ducks/layout/actions";
+import {
+    closeWindow,
+    moveWindowBetweenNodes,
+    openNewWindow,
+    setWindowParams,
+    setWindowTitle
+} from "../../store/ducks/layout/actions";
 import WindowSelect from "./WindowSelect";
 import windowFactory from "./WindowFactory";
 import DraggableWindow from "./DraggableWindow";
@@ -80,8 +86,8 @@ const DockUnstyled = (props: {
     });
 
     const onWindowSelect = (value: string) => {
-        const {id, askForParams} = windowFactory.createWindow(value);
-        dispatch(openNewWindow(props.id, id, value, askForParams ? undefined : {}));
+        const {id, askForParams, title} = windowFactory.createWindow(value);
+        dispatch(openNewWindow(props.id, id, value, askForParams ? undefined : {}, title));
         console.log("selected " + value);
     };
 
@@ -93,13 +99,17 @@ const DockUnstyled = (props: {
         dispatch(setWindowParams(dockedWindow, params));
     };
 
+    const changeTitle = (title: string) => {
+        dispatch(setWindowTitle(dockedWindow, title));
+    };
+
     const renderer = windowFactory.getRenderer(windowData?.type);
     const paramsRenderer = windowFactory.getParamsRenderer(windowData?.type);
     return (
         <div className={props.className} ref={drop}>
             <DockHeader>
                 <HeaderTitle>
-                    ID: [{props.id}]
+                    {windowData?.title || ""}
                 </HeaderTitle>
                 <HeaderIcons>
                     <FontAwesomeIcon icon="grip-lines" onClick={props.onSplitHorizontal}/>
@@ -112,8 +122,8 @@ const DockUnstyled = (props: {
                 {dockedWindow ?
                     <DraggableWindow windowId={dockedWindow}>
                         <>
-                            {!windowData.requestingParams && renderer && renderer(windowData?.params)}
-                            {windowData.requestingParams && paramsRenderer && paramsRenderer(onParamsSubmit)}
+                            {!windowData.requestingParams && renderer && renderer(windowData?.params, changeTitle)}
+                            {windowData.requestingParams && paramsRenderer && paramsRenderer(onParamsSubmit, changeTitle)}
                         </>
                     </DraggableWindow> :
                     <WindowSelect id={props.id} placeholder={"Select window"} onSelected={onWindowSelect}/>}

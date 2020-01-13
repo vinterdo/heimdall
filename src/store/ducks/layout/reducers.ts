@@ -10,6 +10,7 @@ import {
     MOVE_WINDOW_BETWEEN_NODES,
     OPEN_NEW_WINDOW,
     SET_WINDOW_PARAMS,
+    SET_WINDOW_TITLE,
     SPLIT_NODE_HORIZONTALLY_ACTION,
     SPLIT_NODE_VERTICALLY_ACTION,
     SWITCH_TAB,
@@ -53,6 +54,8 @@ export default function layoutReducer(state = initialState, action: LayoutAction
             return doCloseWindow(state, action.payload.nodeId);
         case SET_WINDOW_PARAMS:
             return doSetWindowParams(state, action.payload.windowId, action.payload.params);
+        case SET_WINDOW_TITLE:
+            return doSetWindowTitle(state, action.payload.windowId, action.payload.title);
         default:
             return state;
     }
@@ -65,6 +68,13 @@ function copyState(oldState: ILayoutState): { newState: ILayoutState, currentTab
         throw Error("current tab not found, state malformed");
     }
     return {newState, currentTab};
+}
+
+function doSetWindowTitle(state: ILayoutState, windowId: number, title: string) {
+    const {newState} = copyState(state);
+    const window = newState.windows[windowId];
+    window.title = title;
+    return newState;
 }
 
 function doSetWindowParams(state: ILayoutState, windowId: number, params: any) {
@@ -117,15 +127,16 @@ function doCloseTab(state: ILayoutState, tabName: string) {
     return newState;
 }
 
-function doOpenNewWindow(state: ILayoutState, payload: { nodeId: string, windowId: number, windowType: string, params: any }) {
-    const {nodeId, windowId, windowType, params} = payload;
+function doOpenNewWindow(state: ILayoutState, payload: { nodeId: string, windowId: number, windowType: string, params: any, title: string }) {
+    const {nodeId, windowId, windowType, params, title} = payload;
     const {newState, currentTab} = copyState(state);
     currentTab.nodeToWindow[nodeId] = windowId;
     currentTab.windowToNode[windowId] = nodeId;
     newState.windows[windowId] = {
         type: windowType,
         params,
-        requestingParams: params === undefined
+        requestingParams: params === undefined,
+        title
     };
     return newState;
 }

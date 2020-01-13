@@ -32,14 +32,15 @@ export function moveWindowBetweenNodes(oldNodeId: string, newNodeId: string, win
     }
 }
 
-export function openNewWindow(nodeId: string, windowId: number, windowType: string, params: any): LayoutTypes.LayoutActionTypes {
+export function openNewWindow(nodeId: string, windowId: number, windowType: string, params: any, title: string): LayoutTypes.LayoutActionTypes {
     return {
         type: LayoutTypes.OPEN_NEW_WINDOW,
         payload: {
             nodeId,
             windowId,
             windowType,
-            params
+            params,
+            title
         }
     }
 }
@@ -96,6 +97,16 @@ export function setWindowParams(windowId: number, params: any): LayoutTypes.Layo
         payload: {
             windowId,
             params
+        }
+    }
+}
+
+export function setWindowTitle(windowId: number, title: string): LayoutTypes.LayoutActionTypes {
+    return {
+        type: LayoutTypes.SET_WINDOW_TITLE,
+        payload: {
+            windowId,
+            title
         }
     }
 }
