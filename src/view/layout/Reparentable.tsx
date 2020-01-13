@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 interface IReparentableStore {
     [key: string]: {
-        mountNode:  HTMLElementTagNameMap["div"]
+        mountNode:  HTMLElementTagNameMap["span"]
         inUse: boolean
     }
 }
@@ -13,7 +13,7 @@ const store: IReparentableStore = {};
 function getMountNode(uid: string) {
     if (!store[uid]) {
         store[uid] = {
-            mountNode: document.createElement('div'),
+            mountNode: document.createElement('span'),
             inUse: true
         };
     } else {
@@ -39,6 +39,7 @@ function removeMountNode(uid: string) {
 interface IReparentableProps {
     uid: string;
     children: React.ReactElement
+    className?: string
 }
 
 export default class Reparentable extends Component<IReparentableProps> {
@@ -66,7 +67,7 @@ export default class Reparentable extends Component<IReparentableProps> {
     }
 
     render() {
-        return <div ref={(el) => { this.el = el; }}>
+        return <div ref={(el) => { this.el = el; }} className={this.props.className}>
 
         </div>;
     }

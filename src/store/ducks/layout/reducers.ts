@@ -9,6 +9,7 @@ import {
     LayoutActionTypes,
     MOVE_WINDOW_BETWEEN_NODES,
     OPEN_NEW_WINDOW,
+    SET_WINDOW_PARAMS,
     SPLIT_NODE_HORIZONTALLY_ACTION,
     SPLIT_NODE_VERTICALLY_ACTION,
     SWITCH_TAB,
@@ -18,14 +19,14 @@ import {findNodeByNodeId} from "./utils";
 
 const initialState: ILayoutState = {
     tabs: {
-        "default": {
+        "Default tab": {
             rootNode: {id: "", a: undefined, b: undefined},
             windowToNode: {},
             nodeToWindow: {},
         }
     },
-    windowIdToType: {},
-    currentTab: "default"
+    windows: {},
+    currentTab: "Default tab"
 };
 
 export default function layoutReducer(state = initialState, action: LayoutActionTypes): ILayoutState {
@@ -50,6 +51,8 @@ export default function layoutReducer(state = initialState, action: LayoutAction
             return doCloseTab(state, action.payload.tabName);
         case CLOSE_WINDOW:
             return doCloseWindow(state, action.payload.nodeId);
+        case SET_WINDOW_PARAMS:
+            return doSetWindowParams(state, action.payload.windowId, action.payload.params);
         default:
             return state;
     }
@@ -64,15 +67,24 @@ function copyState(oldState: ILayoutState): { newState: ILayoutState, currentTab
     return {newState, currentTab};
 }
 
+function doSetWindowParams(state: ILayoutState, windowId: number, params: any) {
+    const {newState} = copyState(state);
+    const window = newState.windows[windowId];
+    window.requestingParams = false;
+    window.params = params;
+
+    return newState;
+}
+
 function doCloseWindow(state: ILayoutState, nodeId: string) {
     const {newState, currentTab} = copyState(state);
     const windowId = currentTab.nodeToWindow[nodeId];
-    if(!windowId) {
+    if (!windowId) {
         throw Error("window for node not found");
     }
     delete currentTab.nodeToWindow[nodeId];
     delete currentTab.windowToNode[windowId];
-    delete newState.windowIdToType[windowId];
+    delete newState.windows[windowId];
 
     return newState;
 }
@@ -81,7 +93,7 @@ function doCloseTab(state: ILayoutState, tabName: string) {
     const {newState} = copyState(state);
     // 1. remove all windows on this tab
     Object.keys(newState.tabs[tabName].windowToNode).forEach((key: string) => {
-        delete newState.windowIdToType[parseInt(key, 10)];
+        delete newState.windows[parseInt(key, 10)];
     });
     // 2. switch to previous tab
     const keys = Object.keys(state.tabs);
@@ -105,12 +117,16 @@ function doCloseTab(state: ILayoutState, tabName: string) {
     return newState;
 }
 
-function doOpenNewWindow(state: ILayoutState, payload: { nodeId: string, windowId: number, windowType: string }) {
-    const {nodeId, windowId, windowType} = payload;
+function doOpenNewWindow(state: ILayoutState, payload: { nodeId: string, windowId: number, windowType: string, params: any }) {
+    const {nodeId, windowId, windowType, params} = payload;
     const {newState, currentTab} = copyState(state);
     currentTab.nodeToWindow[nodeId] = windowId;
     currentTab.windowToNode[windowId] = nodeId;
-    newState.windowIdToType[windowId] = windowType;
+    newState.windows[windowId] = {
+        type: windowType,
+        params,
+        requestingParams: params === undefined
+    };
     return newState;
 }
 

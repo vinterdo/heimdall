@@ -4,8 +4,12 @@ export interface ILayoutState {
     tabs: {
         [key: string]: ILayoutTab
     }
-    windowIdToType: {
-        [key: number]: string
+    windows: {
+        [key: number]: {
+            type: string
+            params: any
+            requestingParams: boolean
+        }
     }
     currentTab: string
 }
@@ -40,6 +44,7 @@ export const SWITCH_TAB = "SWITCH_TAB";
 export const UPDATE_SPLIT_VALUE = "UPDATE_SPLIT_VALUE";
 export const CLOSE_TAB = "CLOSE_TAB";
 export const CLOSE_WINDOW = "CLOSE_WINDOW";
+export const SET_WINDOW_PARAMS = "SET_WINDOW_PARAMS";
 
 export interface ISplitNodeVerticallyAction {
     type: typeof SPLIT_NODE_VERTICALLY_ACTION
@@ -76,7 +81,8 @@ export interface IOpenNewWindow {
     payload: {
         nodeId: string,
         windowId: number,
-        windowType: string
+        windowType: string,
+        params: any
     }
 }
 
@@ -115,6 +121,14 @@ export interface ICloseWindow {
     }
 }
 
+export interface ISetWindowParams {
+    type: typeof SET_WINDOW_PARAMS,
+    payload: {
+        windowId: number,
+        params: any
+    }
+}
+
 export type LayoutActionTypes =
     ICloseNodeAction |
     ISplitNodeHorizontallyAction |
@@ -125,4 +139,5 @@ export type LayoutActionTypes =
     ISwitchTab |
     IUpdateSplitValue |
     ICloseTab |
+    ISetWindowParams |
     ICloseWindow;

@@ -14,8 +14,20 @@ library.add(faTimes, faGripLines, faGripLinesVertical, faSearch);
 
 export const store = configureStore();
 
-windowFactory.addTemplate("Dropdown", () => {return (<ExampleDropdown/>)});
-windowFactory.addTemplate("Form", () => {return (<ExampleForm/>)});
+windowFactory.addTemplate({
+    name: "Dropdown",
+    windowNodeProducer: (params: any) => {
+        return (<ExampleDropdown.WindowRenderer params={params}/>)
+    },
+    paramsViewProducer: (onSubmit) => {
+        return (<ExampleDropdown.ParamsRenderer onSubmit={onSubmit}/>)
+    }
+});
+windowFactory.addTemplate({
+    name: "Form", windowNodeProducer: () => {
+        return (<ExampleForm/>)
+    }
+});
 
 export default () => {
     return (

@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import {useDrop} from "react-dnd";
 import {useDispatch, useSelector} from "react-redux";
-import {closeWindow, moveWindowBetweenNodes, openNewWindow} from "../../store/ducks/layout/actions";
+import {closeWindow, moveWindowBetweenNodes, openNewWindow, setWindowParams} from "../../store/ducks/layout/actions";
 import WindowSelect from "./WindowSelect";
 import windowFactory from "./WindowFactory";
 import DraggableWindow from "./DraggableWindow";
@@ -61,7 +61,7 @@ const DockUnstyled = (props: {
     const dispatch = useDispatch();
     const currentTab = useSelector((state: AppState) => state.layout.currentTab);
     const dockedWindow = useSelector((state: AppState) => state.layout.tabs[currentTab].nodeToWindow[props.id]);
-    const windowType = useSelector((state: AppState) => state.layout.windowIdToType[dockedWindow]);
+    const windowData = useSelector((state: AppState) => state.layout.windows[dockedWindow]);
     const onDrop = (nodeId: string, windowId: number) => {
         if (nodeId === props.id) {
             return;
@@ -80,8 +80,8 @@ const DockUnstyled = (props: {
     });
 
     const onWindowSelect = (value: string) => {
-        const {id} = windowFactory.createWindow(value);
-        dispatch(openNewWindow(props.id, id, value));
+        const {id, askForParams} = windowFactory.createWindow(value);
+        dispatch(openNewWindow(props.id, id, value, askForParams ? undefined : {}));
         console.log("selected " + value);
     };
 
@@ -89,7 +89,12 @@ const DockUnstyled = (props: {
         dispatch(closeWindow(props.id));
     };
 
-    const renderer = windowFactory.getRenderer(windowType);
+    const onParamsSubmit = (params: any) => {
+        dispatch(setWindowParams(dockedWindow, params));
+    };
+
+    const renderer = windowFactory.getRenderer(windowData?.type);
+    const paramsRenderer = windowFactory.getParamsRenderer(windowData?.type);
     return (
         <div className={props.className} ref={drop}>
             <DockHeader>
@@ -106,9 +111,10 @@ const DockUnstyled = (props: {
             <DockingArea isOver={isOver && !dockedWindow}>
                 {dockedWindow ?
                     <DraggableWindow windowId={dockedWindow}>
-                        <div>
-                            {renderer && renderer()}
-                        </div>
+                        <>
+                            {!windowData.requestingParams && renderer && renderer(windowData?.params)}
+                            {windowData.requestingParams && paramsRenderer && paramsRenderer(onParamsSubmit)}
+                        </>
                     </DraggableWindow> :
                     <WindowSelect id={props.id} placeholder={"Select window"} onSelected={onWindowSelect}/>}
             </DockingArea>

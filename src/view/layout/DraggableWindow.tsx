@@ -5,6 +5,11 @@ import {useSelector} from "react-redux";
 import {AppState} from "../../store/store";
 import Reparentable from "./Reparentable";
 
+const ReparentableStyled = styled(Reparentable)`
+  width: 100%;
+  height: 100%;
+`;
+
 const DraggableWindow = (props: { className?: string, windowId: number, children: React.ReactElement | undefined }) => {
     const currentTab = useSelector((state: AppState) => state.layout.currentTab);
     const nodeId = useSelector((state: AppState) => state.layout.tabs[currentTab].windowToNode[props.windowId]);
@@ -20,9 +25,9 @@ const DraggableWindow = (props: { className?: string, windowId: number, children
     });
     return (
         <div ref={drag} style={{opacity}} className={props.className}>
-            <Reparentable uid={"" + props.windowId}>
+            <ReparentableStyled uid={"" + props.windowId}>
                 {props.children || <></>}
-            </Reparentable>
+            </ReparentableStyled>
         </div>
     )
 };
