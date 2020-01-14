@@ -2,8 +2,8 @@ import {useDrag} from "react-dnd";
 import styled from "styled-components";
 import * as React from "react";
 import {useSelector} from "react-redux";
-import {AppState} from "../../store/store";
 import Reparentable from "./Reparentable";
+import {ILayoutState} from "../../store/ducks/layout/types";
 
 const ReparentableStyled = styled(Reparentable)`
   width: 100%;
@@ -11,8 +11,8 @@ const ReparentableStyled = styled(Reparentable)`
 `;
 
 const DraggableWindow = (props: { className?: string, windowId: number, children: React.ReactElement | undefined }) => {
-    const currentTab = useSelector((state: AppState) => state.layout.currentTab);
-    const nodeId = useSelector((state: AppState) => state.layout.tabs[currentTab].windowToNode[props.windowId]);
+    const currentTab = useSelector((state: {layout: ILayoutState}) => state.layout.currentTab);
+    const nodeId = useSelector((state: {layout: ILayoutState}) => state.layout.tabs[currentTab].windowToNode[props.windowId]);
     const [{opacity}, drag] = useDrag({
         item: {
             type: "draggableWindow",

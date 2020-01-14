@@ -39,7 +39,7 @@ function shouldRenderSuggestions() {
 }
 
 const onSuggestionSelected = (onSelected: (name: string) => void) => (
-    event: React.FormEvent<any>,
+    _: React.FormEvent<any>,
     {suggestion}: SuggestionSelectedEventData<{ name: string }>) => {
     onSelected(suggestion.name);
 };

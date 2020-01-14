@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import * as React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {AppState} from "../../store/store";
 import {useState} from "react";
 import {closeTab, createNewTab, switchTab} from "../../store/ducks/layout/actions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {ILayoutState} from "../../store/ducks/layout/types";
 
 const PlusButton = styled.button`
   background: #EEE;
@@ -16,8 +16,8 @@ const CloseTabCross = styled(FontAwesomeIcon)`
 `;
 
 const TabsTopBar = (props: { className?: string }) => {
-    const tabs = useSelector((state: AppState) => Object.keys(state.layout.tabs));
-    const currentTab = useSelector((state: AppState) => state.layout.currentTab);
+    const tabs = useSelector((state: {layout: ILayoutState}) => Object.keys(state.layout.tabs));
+    const currentTab = useSelector((state: {layout: ILayoutState}) => state.layout.currentTab);
     const [newTabName, setNewTabName] = useState<string | null>(null);
     const dispatch = useDispatch();
     const [isAdding, setAdding] = useState<boolean>(false);

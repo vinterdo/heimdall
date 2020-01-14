@@ -13,7 +13,7 @@ import {
 import WindowSelect from "./WindowSelect";
 import windowFactory from "./WindowFactory";
 import DraggableWindow from "./DraggableWindow";
-import {AppState} from "../../store/store";
+import {ILayoutState} from "../../store/ducks/layout/types";
 
 const DockHeader = styled.div`
   color: #888;
@@ -53,7 +53,7 @@ const DockingAreaRaw = (props: { children: React.ReactElement, isOver: boolean, 
 
 const DockingArea = styled(DockingAreaRaw)`
   flex-grow: 1;
-  background: ${props => props.isOver ? "#CCC" : "#FFF"};
+  background: ${(props: {isOver: boolean}) => props.isOver ? "#CCC" : "#FFF"};
   overflow: auto;
 `;
 
@@ -65,10 +65,10 @@ const DockUnstyled = (props: {
     id: string
 }) => {
     const dispatch = useDispatch();
-    const currentTab = useSelector((state: AppState) => state.layout.currentTab);
-    const dockedWindow = useSelector((state: AppState) => state.layout.tabs[currentTab].nodeToWindow[props.id]);
-    const windowData = useSelector((state: AppState) => state.layout.windows[dockedWindow]);
-    const nextWindowId = useSelector((state: AppState) => state.layout.nextWindowId);
+    const currentTab = useSelector((state: {layout: ILayoutState}) => state.layout.currentTab);
+    const dockedWindow = useSelector((state: {layout: ILayoutState}) => state.layout.tabs[currentTab].nodeToWindow[props.id]);
+    const windowData = useSelector((state: {layout: ILayoutState}) => state.layout.windows[dockedWindow]);
+    const nextWindowId = useSelector((state: {layout: ILayoutState}) => state.layout.nextWindowId);
 
     const onDrop = (nodeId: string, windowId: number) => {
         if (nodeId === props.id) {
@@ -81,7 +81,7 @@ const DockUnstyled = (props: {
     };
     const [{isOver}, drop] = useDrop({
         accept: "draggableWindow",
-        drop: (item, monitor) => onDrop(monitor.getItem().nodeId, monitor.getItem().windowId),
+        drop: (_, monitor) => onDrop(monitor.getItem().nodeId, monitor.getItem().windowId),
         collect: monitor => ({
             isOver: monitor.isOver(),
         }),

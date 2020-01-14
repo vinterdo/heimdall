@@ -1,8 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+export {
+  default as Layout
+} from "./view/layout/Layout"
 
-ReactDOM.render(<App />, document.getElementById('root'));
+export {
+  default as WindowFactory
+} from "./view/layout/WindowFactory"
 
-serviceWorker.unregister();
+export {
+  default as reducer
+} from "./store/ducks/layout/reducers"

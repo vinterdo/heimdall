@@ -1,12 +1,12 @@
 import {useSelector} from "react-redux";
-import {AppState} from "../../store/store";
 import React from "react";
 import LayoutNode from "./LayoutNode";
 import styled from "styled-components";
+import {ILayoutState} from "../../store/ducks/layout/types";
 
 const Tab = (props: {className?: string }) => {
-    const currentTab = useSelector((state: AppState) => state.layout.currentTab);
-    const tab = useSelector((store: AppState) => store.layout.tabs[currentTab]);
+    const currentTab = useSelector((state: {layout: ILayoutState}) => state.layout.currentTab);
+    const tab = useSelector((store: {layout: ILayoutState}) => store.layout.tabs[currentTab]);
     if (tab === undefined) {
         console.log("tab does not exits");
         return <></>

@@ -7,7 +7,7 @@ interface IWindowRegistryEntry<T> {
     paramsViewProducer?: (onSubmit: (params: T) => void, changeTitle: (title: string) => void) => React.ReactElement
 }
 
-class WindowFactory {
+export class WindowFactory {
     private templates: Map<string, IWindowRegistryEntry<any>> = new Map<string, IWindowRegistryEntry<any>>();
 
     public addTemplate<T>(entry: IWindowRegistryEntry<T>) {

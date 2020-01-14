@@ -11,10 +11,6 @@ import React, {useRef} from "react";
 import Dock from "./Dock";
 import styled from "styled-components";
 
-const SplitPaneStyled = styled(SplitPane)`
-  //position: relative !important;
-`;
-
 const SplitWrapper = styled.div`
   width: 100%;
   height: 100%;
@@ -43,7 +39,7 @@ const LayoutNode = (props: { node: ILayoutNode }) => {
             }
             return (
                 <SplitWrapper ref={splitRef}>
-                    <SplitPaneStyled
+                    <SplitPane
                         split={currentNode.split}
                         defaultSize={currentNode.splitValue + "%"}
                         onDragFinished={onDragFinished}
@@ -52,7 +48,7 @@ const LayoutNode = (props: { node: ILayoutNode }) => {
                     >
                         <LayoutNode node={currentNode.a}/>
                         <LayoutNode node={currentNode.b}/>
-                    </SplitPaneStyled>
+                    </SplitPane>
                 </SplitWrapper>
             );
         case undefined:
