@@ -9,7 +9,6 @@ interface IWindowRegistryEntry<T> {
 
 class WindowFactory {
     private templates: Map<string, IWindowRegistryEntry<any>> = new Map<string, IWindowRegistryEntry<any>>();
-    private static currentId = 1;
 
     public addTemplate<T>(entry: IWindowRegistryEntry<T>) {
         if (this.templates.has(entry.name)) {
@@ -18,19 +17,17 @@ class WindowFactory {
         this.templates.set(entry.name, entry);
     }
 
-    public createWindow(name: string): { id: number, askForParams: boolean, title: string } {
-        if (!this.templates.has(name)) {
-            throw new Error("Template with name " + name + " is not registered");
+    public createWindow(windowTypeName: string, windowId: number): { id: number, askForParams: boolean, title: string } {
+        if (!this.templates.has(windowTypeName)) {
+            throw new Error("Template with name " + windowTypeName + " is not registered");
         }
-        const id = WindowFactory.currentId;
-        WindowFactory.currentId++;
-        const entry = this.templates.get(name);
+        const entry = this.templates.get(windowTypeName);
         if (!entry) {
             throw new Error("Malformed state, this should never happen");
         }
         const title = entry.defaultTitle || "";
         return {
-            id,
+            id: windowId,
             askForParams: entry.paramsViewProducer !== undefined,
             title
         }

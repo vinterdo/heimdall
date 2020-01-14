@@ -13,6 +13,7 @@ export interface ILayoutState {
         }
     }
     currentTab: string
+    nextWindowId: number
 }
 
 export interface ILayoutTab {

@@ -68,6 +68,8 @@ const DockUnstyled = (props: {
     const currentTab = useSelector((state: AppState) => state.layout.currentTab);
     const dockedWindow = useSelector((state: AppState) => state.layout.tabs[currentTab].nodeToWindow[props.id]);
     const windowData = useSelector((state: AppState) => state.layout.windows[dockedWindow]);
+    const nextWindowId = useSelector((state: AppState) => state.layout.nextWindowId);
+
     const onDrop = (nodeId: string, windowId: number) => {
         if (nodeId === props.id) {
             return;
@@ -86,9 +88,8 @@ const DockUnstyled = (props: {
     });
 
     const onWindowSelect = (value: string) => {
-        const {id, askForParams, title} = windowFactory.createWindow(value);
-        dispatch(openNewWindow(props.id, id, value, askForParams ? undefined : {}, title));
-        console.log("selected " + value);
+        const {askForParams, title} = windowFactory.createWindow(value, nextWindowId);
+        dispatch(openNewWindow(props.id, nextWindowId, value, askForParams ? undefined : {}, title));
     };
 
     const onSearchClick = () => {

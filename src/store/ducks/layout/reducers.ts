@@ -27,7 +27,8 @@ const initialState: ILayoutState = {
         }
     },
     windows: {},
-    currentTab: "Default tab"
+    currentTab: "Default tab",
+    nextWindowId: 1
 };
 
 export default function layoutReducer(state = initialState, action: LayoutActionTypes): ILayoutState {
@@ -138,6 +139,7 @@ function doOpenNewWindow(state: ILayoutState, payload: { nodeId: string, windowI
         requestingParams: params === undefined,
         title
     };
+    newState.nextWindowId++;
     return newState;
 }
 
